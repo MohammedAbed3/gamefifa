@@ -1,12 +1,11 @@
-import 'dart:convert';
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guess_the_player/moduls/Home%20Page/cubit/states.dart';
 
 import '../../../models/PalyerModel.dart';
-import '../PlayerModelList.dart';
 
 class BlurCubit extends Cubit<BlurStates> {
   BlurCubit() : super(BlurInitialState(20)); // قيمة البداية 20
@@ -18,30 +17,25 @@ class BlurCubit extends Cubit<BlurStates> {
   static BlurCubit get(context)=> BlocProvider.of(context);
 
   PlayerModel? playerModel;
-  final dio = Dio();
 
 
 
-  Future<void> fetchData() async {
-    try {
-      // إنشاء مثيل من Dio
-      Dio dio = Dio();
+  Future<List<PlayerModel>> fetchPlayerData() async {
+    final response = await http.get(Uri.parse(
+        'https://guesstheplayer.site/player22.json'));
 
-      // إجراء طلب GET
-      final response = await dio.get('https://gist.githubusercontent.com/MohammedAbed3/27663f0d445d1a915e10d46f033a4303/raw/3c2ede8d7d0744e2281003aa09e30d9ea56fd42c/gistfile1.txt'); // Replace with your actual API URL
-          //');
-
-      // تحقق من استجابة الـ API
-      if (response.statusCode == 200) {
-        print('البيانات: ${response.data}');
-        playerModel= PlayerModel.fromJson(response.data);
-      } else {
-        print('فشل الاتصال: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('حدث خطأ: $e');
+    if (response.statusCode == 200) {
+      List<dynamic> jsonResponse = json.decode(response.body);
+      return jsonResponse.map((data) {
+        return PlayerModel.fromJson(data);
+      }).toList();
+    } else {
+      throw Exception('Failed to load player data');
     }
   }
+
+
+
 
 
 

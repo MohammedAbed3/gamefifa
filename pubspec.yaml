@@ -39,8 +39,10 @@ dependencies:
   blur: ^4.0.0
   flutter_bloc: ^8.1.6
   bloc: ^8.1.4
-  dio: ^5.7.0
-  intl: ^0.18.1
+  http: ^1.2.2
+
+
+
 
 
 dev_dependencies:

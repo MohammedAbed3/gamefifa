@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => BlurCubit()..fetchData(),
+      create: (context) => BlurCubit()..fetchPlayerData(),
       child: BlocConsumer<BlurCubit, BlurStates>(
         builder: (context, state) {
           BlurCubit cubit = BlurCubit.get(context);
@@ -35,550 +35,590 @@ class HomePage extends StatelessWidget {
             blurValue = state.blurLevel;
           } else if (state is BlurInitialState) {
             blurValue = state.blurLevel;
+          }else{
+
           }
 
+          if(state is PlayerLoadingState){
+            return Center(child: CircularProgressIndicator());
 
-          return Scaffold(
-            body: Container(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.center, // بداية التدرج من المركز
-                  radius: 1.0, // التدرج يبدأ من النص ويذهب إلى الأطراف
-                  colors: [
-                    cubit.isFullyRevealed
-                        ? greenDark
-                        : redDark, // اللون في المركز
+          }else if (state is PlayerSuccessState) {
+            final players = state.player;
+            print('player here ${players.commonName}');
 
-                    Colors.black, // اللون عند الأطراف
-                  ],
+            return Scaffold(
+              body: Container(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.center, // بداية التدرج من المركز
+                    radius: 1.0, // التدرج يبدأ من النص ويذهب إلى الأطراف
+                    colors: [
+                      cubit.isFullyRevealed
+                          ? greenDark
+                          : redDark, // اللون في المركز
+
+                      Colors.black, // اللون عند الأطراف
+                    ],
+                  ),
                 ),
-              ),
-              child: Center(
-                child: Form(
-                  key: formKey,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 30,
-                        ),
-                        ClipPath(
-                          clipper: MyClipper(),
-                          child: Container(
-                            width: 270,
-                            height: 430,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                // First section - Player information and image
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Color(0xFFfdeaa7),
-                                          Color(0xFFe1c072)
-                                        ],
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 15),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Blur(
-                                                blur: cubit.isFullyRevealed ||
-                                                        cubit.wrongAnswersCount >=
-                                                            6
-                                                    ? 0
-                                                    : 20,
-                                                blurColor: color1,
-                                                colorOpacity: 0,
-                                                child: Text(
-                                                  '94',
-                                                  style: TextStyle(
-                                                    fontSize: 40,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: color3,
-                                                  ),
-                                                ),
-                                              ),
-                                              Blur(
-                                                blur: cubit.isFullyRevealed ||
-                                                        cubit.wrongAnswersCount >=
-                                                            4
-                                                    ? 0
-                                                    : 20,
-                                                blurColor: color1,
-                                                colorOpacity: 0,
-                                                child: Text(
-                                                  'ST',
-                                                  style: TextStyle(
-                                                    fontSize: 25,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: color3,
-                                                  ),
-                                                ),
-                                              ),
-                                              whiteLine(width: 50, height: 0.5),
-                                              SizedBox(height: 10),
-                                              Blur(
-                                                  blur: cubit.isFullyRevealed ||
-                                                          cubit.wrongAnswersCount >=
-                                                              3
-                                                      ? 0
-                                                      : 20,
-                                                  blurColor: color1,
-                                                  colorOpacity: 0,
-                                                  child: Image.network(
-                                                      countryImage,
-                                                      height: 25)),
-                                              SizedBox(height: 10),
-                                              whiteLine(width: 50, height: 0.5),
-                                              Blur(
-                                                  blur: cubit.isFullyRevealed ||
-                                                          cubit.wrongAnswersCount >=
-                                                              5
-                                                      ? 0
-                                                      : 20,
-                                                  blurColor: color1,
-                                                  colorOpacity: 0,
-                                                  child: Image.network(
-                                                      clubImage,
-                                                      height: 60)),
-                                            ],
-                                          ),
+                child: Center(
+                  child: Form(
+                    key: formKey,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 30,
+                          ),
+                          ClipPath(
+                            clipper: MyClipper(),
+                            child: Container(
+                              width: 270,
+                              height: 430,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  // First section - Player information and image
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            Color(0xFFfdeaa7),
+                                            Color(0xFFe1c072)
+                                          ],
                                         ),
-                                        // Wrap the section inside Stack for positioning
-                                        Expanded(
-                                          child: Stack(
-                                            children: [
-                                              Positioned(
-                                                bottom:
-                                                    0, // Position the image at the bottom
-                                                right:
-                                                    40, // Position the image on the right
-                                                child: Blur(
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 15),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: [
+                                                Blur(
                                                   blur: cubit.isFullyRevealed ||
-                                                          cubit.wrongAnswersCount >=
-                                                              7
+                                                      cubit.wrongAnswersCount >=
+                                                          6
                                                       ? 0
                                                       : 20,
                                                   blurColor: color1,
                                                   colorOpacity: 0,
-                                                  child: Container(
-                                                    width: 100,
-                                                    height: 150,
-                                                    decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                        image: NetworkImage(
-                                                            playerImage),
-                                                        fit: BoxFit.cover,
+                                                  child: Text(
+                                                    '94',
+                                                    style: TextStyle(
+                                                      fontSize: 40,
+                                                      fontWeight: FontWeight
+                                                          .bold,
+                                                      color: color3,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Blur(
+                                                  blur: cubit.isFullyRevealed ||
+                                                      cubit.wrongAnswersCount >=
+                                                          4
+                                                      ? 0
+                                                      : 20,
+                                                  blurColor: color1,
+                                                  colorOpacity: 0,
+                                                  child: Text(
+                                                    'ST',
+                                                    style: TextStyle(
+                                                      fontSize: 25,
+                                                      fontWeight: FontWeight
+                                                          .w500,
+                                                      color: color3,
+                                                    ),
+                                                  ),
+                                                ),
+                                                whiteLine(
+                                                    width: 50, height: 0.5),
+                                                SizedBox(height: 10),
+                                                Blur(
+                                                    blur: cubit
+                                                        .isFullyRevealed ||
+                                                        cubit
+                                                            .wrongAnswersCount >=
+                                                            3
+                                                        ? 0
+                                                        : 20,
+                                                    blurColor: color1,
+                                                    colorOpacity: 0,
+                                                    child: Image.network(
+                                                        countryImage,
+                                                        height: 25)),
+                                                SizedBox(height: 10),
+                                                whiteLine(
+                                                    width: 50, height: 0.5),
+                                                Blur(
+                                                    blur: cubit
+                                                        .isFullyRevealed ||
+                                                        cubit
+                                                            .wrongAnswersCount >=
+                                                            5
+                                                        ? 0
+                                                        : 20,
+                                                    blurColor: color1,
+                                                    colorOpacity: 0,
+                                                    child: Image.network(
+                                                        clubImage,
+                                                        height: 60)),
+                                              ],
+                                            ),
+                                          ),
+                                          // Wrap the section inside Stack for positioning
+                                          Expanded(
+                                            child: Stack(
+                                              children: [
+                                                Positioned(
+                                                  bottom:
+                                                  0,
+                                                  // Position the image at the bottom
+                                                  right:
+                                                  40,
+                                                  // Position the image on the right
+                                                  child: Blur(
+                                                    blur: cubit
+                                                        .isFullyRevealed ||
+                                                        cubit
+                                                            .wrongAnswersCount >=
+                                                            7
+                                                        ? 0
+                                                        : 20,
+                                                    blurColor: color1,
+                                                    colorOpacity: 0,
+                                                    child: Container(
+                                                      width: 100,
+                                                      height: 150,
+                                                      decoration: BoxDecoration(
+                                                        image: DecorationImage(
+                                                          image: NetworkImage(
+                                                              playerImage),
+                                                          fit: BoxFit.cover,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                // Second section - Player name and stats
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Color(0xFFfdeaa7),
-                                          Color(0xFFe1c072)
-                                        ],
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Column(
-                                        children: [
-                                          Blur(
-                                            blur: cubit.isFullyRevealed ||
-                                                    cubit.wrongAnswersCount >= 7
-                                                ? 0
-                                                : 20,
-                                            blurColor: color1,
-                                            colorOpacity: 0,
-                                            child: Text(
-                                              '{cubit.playerModel?.commonName}',
-                                              style: TextStyle(
-                                                fontFamily: 'Roboto Condensed',
-                                                fontSize: 28,
-                                                fontWeight: FontWeight.bold,
-                                                color: color3,
-                                              ),
+                                              ],
                                             ),
                                           ),
-                                          whiteLine(width: 200, height: 0.5),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              // العمود الأول
-                                              Column(
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        'P:',
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Roboto Condensed',
-                                                          fontSize: 20,
-                                                          color: color3,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 5),
-                                                      Blur(
-                                                        blur: cubit.isFullyRevealed ||
-                                                                cubit.wrongAnswersCount >=
-                                                                    1
-                                                            ? 0
-                                                            : 20,
-                                                        blurColor: color1,
-                                                        colorOpacity: 0,
-                                                        child: Text(
-                                                          '89',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Roboto Condensed',
-                                                            fontSize: 20,
-                                                            color: color3,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        'SH:',
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Roboto Condensed',
-                                                          fontSize: 20,
-                                                          color: color3,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 5),
-                                                      Blur(
-                                                        blur: cubit.isFullyRevealed ||
-                                                                cubit.wrongAnswersCount >=
-                                                                    1
-                                                            ? 0
-                                                            : 20,
-                                                        blurColor: color1,
-                                                        colorOpacity: 0,
-                                                        child: Text(
-                                                          '{player.totalRating}',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Roboto Condensed',
-                                                            fontSize: 20,
-                                                            color: color3,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        'PA:',
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Roboto Condensed',
-                                                          fontSize: 20,
-                                                          color: color3,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 5),
-                                                      Blur(
-                                                        blur: cubit.isFullyRevealed ||
-                                                                cubit.wrongAnswersCount >=
-                                                                    1
-                                                            ? 0
-                                                            : 20,
-                                                        blurColor: color1,
-                                                        colorOpacity: 0,
-                                                        child: Text(
-                                                          '81',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Roboto Condensed',
-                                                            fontSize: 20,
-                                                            color: color3,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              // العمود الثاني
-                                              Column(
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        'D:',
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Roboto Condensed',
-                                                          fontSize: 20,
-                                                          color: color3,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 5),
-                                                      Blur(
-                                                        blur: cubit.isFullyRevealed ||
-                                                                cubit.wrongAnswersCount >=
-                                                                    2
-                                                            ? 0
-                                                            : 20,
-                                                        blurColor: color1,
-                                                        colorOpacity: 0,
-                                                        child: Text(
-                                                          '90',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Roboto Condensed',
-                                                            fontSize: 20,
-                                                            color: color3,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        'DE:',
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Roboto Condensed',
-                                                          fontSize: 20,
-                                                          color: color3,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 5),
-                                                      Blur(
-                                                        blur: cubit.isFullyRevealed ||
-                                                                cubit.wrongAnswersCount >=
-                                                                    2
-                                                            ? 0
-                                                            : 20,
-                                                        blurColor: color1,
-                                                        colorOpacity: 0,
-                                                        child: Text(
-                                                          '33',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Roboto Condensed',
-                                                            fontSize: 20,
-                                                            color: color3,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        'PH:',
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Roboto Condensed',
-                                                          fontSize: 20,
-                                                          color: color3,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 5),
-                                                      Blur(
-                                                        blur: cubit.isFullyRevealed ||
-                                                                cubit.wrongAnswersCount >=
-                                                                    2
-                                                            ? 0
-                                                            : 20,
-                                                        blurColor: color1,
-                                                        colorOpacity: 0,
-                                                        child: Text(
-                                                          '83',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Roboto Condensed',
-                                                            fontSize: 20,
-                                                            color: color3,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
                                         ],
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                  // Second section - Player name and stats
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            Color(0xFFfdeaa7),
+                                            Color(0xFFe1c072)
+                                          ],
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(16.0),
+                                        child: Column(
+                                          children: [
+                                            Blur(
+                                              blur: cubit.isFullyRevealed ||
+                                                  cubit.wrongAnswersCount >= 7
+                                                  ? 0
+                                                  : 20,
+                                              blurColor: color1,
+                                              colorOpacity: 0,
+                                              child: Text(
+                                                '{cubit.playerModel?.commonName}',
+                                                style: TextStyle(
+                                                  fontFamily: 'Roboto Condensed',
+                                                  fontSize: 28,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: color3,
+                                                ),
+                                              ),
+                                            ),
+                                            whiteLine(width: 200, height: 0.5),
+                                            SizedBox(height: 10),
+                                            Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                // العمود الأول
+                                                Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'P:',
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                            'Roboto Condensed',
+                                                            fontSize: 20,
+                                                            color: color3,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 5),
+                                                        Blur(
+                                                          blur: cubit
+                                                              .isFullyRevealed ||
+                                                              cubit
+                                                                  .wrongAnswersCount >=
+                                                                  1
+                                                              ? 0
+                                                              : 20,
+                                                          blurColor: color1,
+                                                          colorOpacity: 0,
+                                                          child: Text(
+                                                            '89',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                              'Roboto Condensed',
+                                                              fontSize: 20,
+                                                              color: color3,
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'SH:',
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                            'Roboto Condensed',
+                                                            fontSize: 20,
+                                                            color: color3,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 5),
+                                                        Blur(
+                                                          blur: cubit
+                                                              .isFullyRevealed ||
+                                                              cubit
+                                                                  .wrongAnswersCount >=
+                                                                  1
+                                                              ? 0
+                                                              : 20,
+                                                          blurColor: color1,
+                                                          colorOpacity: 0,
+                                                          child: Text(
+                                                            '{player.totalRating}',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                              'Roboto Condensed',
+                                                              fontSize: 20,
+                                                              color: color3,
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'PA:',
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                            'Roboto Condensed',
+                                                            fontSize: 20,
+                                                            color: color3,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 5),
+                                                        Blur(
+                                                          blur: cubit
+                                                              .isFullyRevealed ||
+                                                              cubit
+                                                                  .wrongAnswersCount >=
+                                                                  1
+                                                              ? 0
+                                                              : 20,
+                                                          blurColor: color1,
+                                                          colorOpacity: 0,
+                                                          child: Text(
+                                                            '81',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                              'Roboto Condensed',
+                                                              fontSize: 20,
+                                                              color: color3,
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                                // العمود الثاني
+                                                Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'D:',
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                            'Roboto Condensed',
+                                                            fontSize: 20,
+                                                            color: color3,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 5),
+                                                        Blur(
+                                                          blur: cubit
+                                                              .isFullyRevealed ||
+                                                              cubit
+                                                                  .wrongAnswersCount >=
+                                                                  2
+                                                              ? 0
+                                                              : 20,
+                                                          blurColor: color1,
+                                                          colorOpacity: 0,
+                                                          child: Text(
+                                                            '90',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                              'Roboto Condensed',
+                                                              fontSize: 20,
+                                                              color: color3,
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'DE:',
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                            'Roboto Condensed',
+                                                            fontSize: 20,
+                                                            color: color3,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 5),
+                                                        Blur(
+                                                          blur: cubit
+                                                              .isFullyRevealed ||
+                                                              cubit
+                                                                  .wrongAnswersCount >=
+                                                                  2
+                                                              ? 0
+                                                              : 20,
+                                                          blurColor: color1,
+                                                          colorOpacity: 0,
+                                                          child: Text(
+                                                            '33',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                              'Roboto Condensed',
+                                                              fontSize: 20,
+                                                              color: color3,
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'PH:',
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                            'Roboto Condensed',
+                                                            fontSize: 20,
+                                                            color: color3,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 5),
+                                                        Blur(
+                                                          blur: cubit
+                                                              .isFullyRevealed ||
+                                                              cubit
+                                                                  .wrongAnswersCount >=
+                                                                  2
+                                                              ? 0
+                                                              : 20,
+                                                          blurColor: color1,
+                                                          colorOpacity: 0,
+                                                          child: Text(
+                                                            '83',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                              'Roboto Condensed',
+                                                              fontSize: 20,
+                                                              color: color3,
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Container(
-                          width: 300,
-                          child: TextFormField(
-                            controller: nameController,
-                            decoration: InputDecoration(
-                              hintText: "أدخل اسم اللاعب",
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 20),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide.none,
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Container(
+                            width: 300,
+                            child: TextFormField(
+                              controller: nameController,
+                              decoration: InputDecoration(
+                                hintText: "أدخل اسم اللاعب",
+                                filled: true,
+                                fillColor: Colors.grey[200],
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                ),
+                                // تخصيص الرسالة في حالة الخطأ
+                                errorStyle:
+                                TextStyle(color: Colors.red, fontSize: 14),
+                                // تلوين الحافة عند وجود خطأ
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide:
+                                  BorderSide(color: Colors.blue, width: 2),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide:
+                                  BorderSide(color: Colors.red, width: 2),
+                                ),
+                                // إضافة أيقونة في ح.\env\Scripts\Activateالة الخطأ
                               ),
-                              // تخصيص الرسالة في حالة الخطأ
-                              errorStyle:
-                                  TextStyle(color: Colors.red, fontSize: 14),
-                              // تلوين الحافة عند وجود خطأ
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    BorderSide(color: Colors.blue, width: 2),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    BorderSide(color: Colors.red, width: 2),
-                              ),
-                              // إضافة أيقونة في ح.\env\Scripts\Activateالة الخطأ
+                              onFieldSubmitted: (value) {
+                                onSubmit(context);
+                              },
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  // يمكن تعديل الشرط كما ترغب لعرض القائمة عند الحاجة
+                                  // _showSuggestions(
+                                  //     context); // إظهار القائمة عندما يتغير النص
+                                }
+
+                                // PopupMenuButton<String>(
+                                //   icon: Icon(Icons.arrow_drop_down),
+                                //   onSelected: (String value) {
+                                //     // عند اختيار النص من القائمة، تعيينه في الـ TextField
+                                //
+                                //     // يمكن تنفيذ أي إجراء آخر هنا، مثل تسجيل الاختيار أو أي منطق آخر
+                                //   },
+                                //   itemBuilder: (BuildContext context) {
+                                //     return suggestions.map((String value) {
+                                //       return PopupMenuItem<String>(
+                                //         value: value,
+                                //         child: Text(value),
+                                //       );
+                                //     }).toList();
+                                //   },
+                                // );
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'يرجى إدخال اسم اللاعب';
+                                }
+                                return null; // إذا كانت القيمة صالحة
+                              },
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.black),
                             ),
-                            onFieldSubmitted: (value) {
+                          ),
+                          SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () {
                               onSubmit(context);
                             },
-                            onChanged: (value) {
-                              if (value.isNotEmpty) {
-                                // يمكن تعديل الشرط كما ترغب لعرض القائمة عند الحاجة
-                                // _showSuggestions(
-                                //     context); // إظهار القائمة عندما يتغير النص
-                              }
-
-                              // PopupMenuButton<String>(
-                              //   icon: Icon(Icons.arrow_drop_down),
-                              //   onSelected: (String value) {
-                              //     // عند اختيار النص من القائمة، تعيينه في الـ TextField
-                              //
-                              //     // يمكن تنفيذ أي إجراء آخر هنا، مثل تسجيل الاختيار أو أي منطق آخر
-                              //   },
-                              //   itemBuilder: (BuildContext context) {
-                              //     return suggestions.map((String value) {
-                              //       return PopupMenuItem<String>(
-                              //         value: value,
-                              //         child: Text(value),
-                              //       );
-                              //     }).toList();
-                              //   },
-                              // );
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'يرجى إدخال اسم اللاعب';
-                              }
-                              return null; // إذا كانت القيمة صالحة
-                            },
-                            style: TextStyle(fontSize: 16, color: Colors.black),
+                            child: Text("تحقق"),
                           ),
-                        ),
-                        SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () {
-                            onSubmit(context);
-                          },
-                          child: Text("تحقق"),
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            // PlayerModel player = await loadPlayerData();
-                            // print('Player: ${player.firstName} ${player.lastName}');
-                            // print('Club: ${player.club}');
-                            // print('Country: ${player.country}');
-                            // print('Position: ${player.position}');
-                            // print('Total Rating: ${player.totalRating}');
-                          },
-                          child: Text("تحقق"),
-                        ),
-                      ],
+                          ElevatedButton(
+                            onPressed: () async {
+                              // PlayerModel player = await loadPlayerData();
+                              // print('Player: ${player.firstName} ${player.lastName}');
+                              // print('Club: ${player.club}');
+                              // print('Country: ${player.country}');
+                              // print('Position: ${player.position}');
+                              // print('Total Rating: ${player.totalRating}');
+                            },
+                            child: Text("تحقق"),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
+            );
+          }else if (state is PlayerErrorState){
+            return Center(child: Text('Error: ${state.message}'));
+
+          }else {
+            throw Exception('Unhandled state: $state');
+
+          }
         },
         listener: (context, state) {},
       ),

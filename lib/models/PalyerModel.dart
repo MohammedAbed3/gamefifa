@@ -1,703 +1,297 @@
-import 'dart:convert';
-
 class PlayerModel {
-  List<Items>? items;
-  int? totalItems;
+  final int id;
+  final int rank;
+  final int overallRating;
+  final String firstName;
+  final String lastName;
+  final String? commonName;
+  final String birthdate;
+  final int height;
+  final int skillMoves;
+  final int weakFootAbility;
+  final int preferredFoot;
+  final String leagueName;
+  final int weight;
+  final String avatarUrl;
+  final String shieldUrl;
+  final List<AlternatePosition> alternatePositions;
+  final List<PlayerAbility> playerAbilities;
+  final String gender;
+  final Nationality nationality;
+  final Team team;
+  final Position position;
+  final Stats stats;
 
+  PlayerModel({
+    required this.id,
+    required this.rank,
+    required this.overallRating,
+    required this.firstName,
+    required this.lastName,
+    this.commonName,
+    required this.birthdate,
+    required this.height,
+    required this.skillMoves,
+    required this.weakFootAbility,
+    required this.preferredFoot,
+    required this.leagueName,
+    required this.weight,
+    required this.avatarUrl,
+    required this.shieldUrl,
+    required this.alternatePositions,
+    required this.playerAbilities,
+    required this.gender,
+    required this.nationality,
+    required this.team,
+    required this.position,
+    required this.stats,
+  });
 
-  PlayerModel.fromJson(Map<String, dynamic> json) {
-    // التأكد من أن 'items' ليس فارغًا وأنه يحتوي على قيمة من النوع المناسب
-    if (json['items'] != null) {
-      items = <Items>[];
-
-      // إذا كانت 'items' نصًا يحتوي على JSON مشفّر، نقوم بتحويله أولاً إلى خريطة
-      if (json['items'] is String) {
-        var decodedItems = jsonDecode(json['items']);
-        // تأكد من أن البيانات المستلمة هي قائمة
-        if (decodedItems is List) {
-          decodedItems.forEach((v) {
-            items!.add(Items.fromJson(v));
-          });
-        } else {
-          print("البيانات غير صحيحة في 'items'");
-        }
-      } else if (json['items'] is List) {
-        // إذا كانت 'items' بالفعل قائمة
-        json['items'].forEach((v) {
-          items!.add(Items.fromJson(v));
-        });
-      } else {
-        print("البيانات في 'items' ليست قائمة أو نص");
-      }
-    }
-
-    // التعامل مع باقي الحقول
-    totalItems = json['totalItems'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.items != null) {
-      data['items'] = this.items!.map((v) => v.toJson()).toList();
-    }
-    data['totalItems'] = this.totalItems;
-    return data;
-  }
-}
-
-class Items {
-  int? id;
-  int? rank;
-  int? overallRating;
-  String? firstName;
-  String? lastName;
-  String? commonName;
-  String? birthdate;
-  int? height;
-  int? skillMoves;
-  int? weakFootAbility;
-  int? preferredFoot;
-  String? leagueName;
-  int? weight;
-  String? avatarUrl;
-  String? shieldUrl;
-  List<AlternatePositions>? alternatePositions;
-  List<PlayerAbilities>? playerAbilities;
-  Gender? gender;
-  Nationality? nationality;
-  Team? team;
-  Position? position;
-  Stats? stats;
-
-  Items(
-      {this.id,
-      this.rank,
-      this.overallRating,
-      this.firstName,
-      this.lastName,
-      this.commonName,
-      this.birthdate,
-      this.height,
-      this.skillMoves,
-      this.weakFootAbility,
-      this.preferredFoot,
-      this.leagueName,
-      this.weight,
-      this.avatarUrl,
-      this.shieldUrl,
-      this.alternatePositions,
-      this.playerAbilities,
-      this.gender,
-      this.nationality,
-      this.team,
-      this.position,
-      this.stats});
-
-  Items.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    rank = json['rank'];
-    overallRating = json['overallRating'];
-    firstName = json['firstName'];
-    lastName = json['lastName'];
-    commonName = json['commonName'];
-    birthdate = json['birthdate'];
-    height = json['height'];
-    skillMoves = json['skillMoves'];
-    weakFootAbility = json['weakFootAbility'];
-    preferredFoot = json['preferredFoot'];
-    leagueName = json['leagueName'];
-    weight = json['weight'];
-    avatarUrl = json['avatarUrl'];
-    shieldUrl = json['shieldUrl'];
-    if (json['alternatePositions'] != null) {
-      alternatePositions = <AlternatePositions>[];
-      json['alternatePositions'].forEach((v) {
-        alternatePositions!.add(new AlternatePositions.fromJson(v));
-      });
-    }
-    if (json['playerAbilities'] != null) {
-      playerAbilities = <PlayerAbilities>[];
-      json['playerAbilities'].forEach((v) {
-        playerAbilities!.add(new PlayerAbilities.fromJson(v));
-      });
-    }
-    gender =
-        json['gender'] != null ? new Gender.fromJson(json['gender']) : null;
-    nationality = json['nationality'] != null
-        ? new Nationality.fromJson(json['nationality'])
-        : null;
-    team = json['team'] != null ? new Team.fromJson(json['team']) : null;
-    position = json['position'] != null
-        ? new Position.fromJson(json['position'])
-        : null;
-    stats = json['stats'] != null ? new Stats.fromJson(json['stats']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['rank'] = this.rank;
-    data['overallRating'] = this.overallRating;
-    data['firstName'] = this.firstName;
-    data['lastName'] = this.lastName;
-    data['commonName'] = this.commonName;
-    data['birthdate'] = this.birthdate;
-    data['height'] = this.height;
-    data['skillMoves'] = this.skillMoves;
-    data['weakFootAbility'] = this.weakFootAbility;
-    data['preferredFoot'] = this.preferredFoot;
-    data['leagueName'] = this.leagueName;
-    data['weight'] = this.weight;
-    data['avatarUrl'] = this.avatarUrl;
-    data['shieldUrl'] = this.shieldUrl;
-    if (this.alternatePositions != null) {
-      data['alternatePositions'] =
-          this.alternatePositions!.map((v) => v.toJson()).toList();
-    }
-    if (this.playerAbilities != null) {
-      data['playerAbilities'] =
-          this.playerAbilities!.map((v) => v.toJson()).toList();
-    }
-    if (this.gender != null) {
-      data['gender'] = this.gender!.toJson();
-    }
-    if (this.nationality != null) {
-      data['nationality'] = this.nationality!.toJson();
-    }
-    if (this.team != null) {
-      data['team'] = this.team!.toJson();
-    }
-    if (this.position != null) {
-      data['position'] = this.position!.toJson();
-    }
-    if (this.stats != null) {
-      data['stats'] = this.stats!.toJson();
-    }
-    return data;
+  factory PlayerModel.fromJson(Map<String, dynamic> json) {
+    return PlayerModel(
+      id: json['id'],
+      rank: json['rank'],
+      overallRating: json['overallRating'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      commonName: json['commonName'],
+      birthdate: json['birthdate'],
+      height: json['height'],
+      skillMoves: json['skillMoves'],
+      weakFootAbility: json['weakFootAbility'],
+      preferredFoot: json['preferredFoot'],
+      leagueName: json['leagueName'],
+      weight: json['weight'],
+      avatarUrl: json['avatarUrl'],
+      shieldUrl: json['shieldUrl'],
+      alternatePositions: (json['alternatePositions'] as List<dynamic>?)
+          ?.map((pos) => AlternatePosition.fromJson(pos))
+          .toList() ??
+          [],
+      playerAbilities: (json['playerAbilities'] as List<dynamic>?)
+          ?.map((ability) => PlayerAbility.fromJson(ability))
+          .toList() ??
+          [],
+      gender: json['gender']['label'],
+      nationality: Nationality.fromJson(json['nationality']),
+      team: Team.fromJson(json['team']),
+      position: Position.fromJson(json['position']),
+      stats: Stats.fromJson(json['stats']),
+    );
   }
 }
 
-class AlternatePositions {
-  String? id;
-  String? label;
-  String? shortLabel;
+class AlternatePosition {
+  final String id;
+  final String label;
+  final String shortLabel;
 
-  AlternatePositions({this.id, this.label, this.shortLabel});
+  AlternatePosition({
+    required this.id,
+    required this.label,
+    required this.shortLabel,
+  });
 
-  AlternatePositions.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    label = json['label'];
-    shortLabel = json['shortLabel'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['label'] = this.label;
-    data['shortLabel'] = this.shortLabel;
-    return data;
+  factory AlternatePosition.fromJson(Map<String, dynamic> json) {
+    return AlternatePosition(
+      id: json['id'],
+      label: json['label'],
+      shortLabel: json['shortLabel'],
+    );
   }
 }
 
-class PlayerAbilities {
-  String? id;
-  String? label;
-  String? description;
-  String? imageUrl;
-  Type? type;
+class PlayerAbility {
+  final String id;
+  final String label;
+  final String description;
+  final String imageUrl;
+  final String type;
 
-  PlayerAbilities(
-      {this.id, this.label, this.description, this.imageUrl, this.type});
+  PlayerAbility({
+    required this.id,
+    required this.label,
+    required this.description,
+    required this.imageUrl,
+    required this.type,
+  });
 
-  PlayerAbilities.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    label = json['label'];
-    description = json['description'];
-    imageUrl = json['imageUrl'];
-    type = json['type'] != null ? new Type.fromJson(json['type']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['label'] = this.label;
-    data['description'] = this.description;
-    data['imageUrl'] = this.imageUrl;
-    if (this.type != null) {
-      data['type'] = this.type!.toJson();
-    }
-    return data;
-  }
-}
-
-class Type {
-  String? id;
-  String? label;
-
-  Type({this.id, this.label});
-
-  Type.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    label = json['label'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['label'] = this.label;
-    return data;
-  }
-}
-
-class Gender {
-  int? id;
-  String? label;
-
-  Gender({this.id, this.label});
-
-  Gender.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    label = json['label'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['label'] = this.label;
-    return data;
+  factory PlayerAbility.fromJson(Map<String, dynamic> json) {
+    return PlayerAbility(
+      id: json['id'],
+      label: json['label'],
+      description: json['description'],
+      imageUrl: json['imageUrl'],
+      type: json['type']['label'],
+    );
   }
 }
 
 class Nationality {
-  int? id;
-  String? label;
-  String? imageUrl;
+  final String label;
+  final String imageUrl;
 
-  Nationality({this.id, this.label, this.imageUrl});
+  Nationality({required this.label, required this.imageUrl});
 
-  Nationality.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    label = json['label'];
-    imageUrl = json['imageUrl'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['label'] = this.label;
-    data['imageUrl'] = this.imageUrl;
-    return data;
+  factory Nationality.fromJson(Map<String, dynamic> json) {
+    return Nationality(
+      label: json['label'],
+      imageUrl: json['imageUrl'],
+    );
   }
 }
 
 class Team {
-  int? id;
-  String? label;
-  String? imageUrl;
-  bool? isPopular;
+  final String label;
+  final String imageUrl;
 
-  Team({this.id, this.label, this.imageUrl, this.isPopular});
+  Team({required this.label, required this.imageUrl});
 
-  Team.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    label = json['label'];
-    imageUrl = json['imageUrl'];
-    isPopular = json['isPopular'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['label'] = this.label;
-    data['imageUrl'] = this.imageUrl;
-    data['isPopular'] = this.isPopular;
-    return data;
+  factory Team.fromJson(Map<String, dynamic> json) {
+    return Team(
+      label: json['label'],
+      imageUrl: json['imageUrl'],
+    );
   }
 }
 
 class Position {
-  String? id;
-  String? shortLabel;
-  String? label;
-  PositionType? positionType;
+  final String label;
 
-  Position({this.id, this.shortLabel, this.label, this.positionType});
+  Position({required this.label});
 
-  Position.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    shortLabel = json['shortLabel'];
-    label = json['label'];
-    positionType = json['positionType'] != null
-        ? new PositionType.fromJson(json['positionType'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['shortLabel'] = this.shortLabel;
-    data['label'] = this.label;
-    if (this.positionType != null) {
-      data['positionType'] = this.positionType!.toJson();
-    }
-    return data;
-  }
-}
-
-class PositionType {
-  String? id;
-  String? name;
-
-  PositionType({this.id, this.name});
-
-  PositionType.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    return data;
+  factory Position.fromJson(Map<String, dynamic> json) {
+    return Position(label: json['label']);
   }
 }
 
 class Stats {
-  Acceleration? acceleration;
-  Acceleration? agility;
-  Acceleration? jumping;
-  Acceleration? stamina;
-  Acceleration? strength;
-  Acceleration? aggression;
-  Acceleration? balance;
-  Acceleration? ballControl;
-  Acceleration? composure;
-  Acceleration? crossing;
-  Acceleration? curve;
-  Acceleration? def;
-  Acceleration? defensiveAwareness;
-  Acceleration? dri;
-  Acceleration? dribbling;
-  Acceleration? finishing;
-  Acceleration? freeKickAccuracy;
-  Acceleration? gkDiving;
-  Acceleration? gkHandling;
-  Acceleration? gkKicking;
-  Acceleration? gkPositioning;
-  Acceleration? gkReflexes;
-  Acceleration? headingAccuracy;
-  Acceleration? interceptions;
-  Acceleration? longPassing;
-  Acceleration? longShots;
-  Acceleration? pac;
-  Acceleration? pas;
-  Acceleration? penalties;
-  Acceleration? phy;
-  Acceleration? positioning;
-  Acceleration? reactions;
-  Acceleration? sho;
-  Acceleration? shortPassing;
-  Acceleration? shotPower;
-  Acceleration? slidingTackle;
-  Acceleration? sprintSpeed;
-  Acceleration? standingTackle;
-  Acceleration? vision;
-  Acceleration? volleys;
+  final int acceleration;
+  final int agility;
+  final int jumping;
+  final int stamina;
+  final int strength;
+  final int aggression;
+  final int balance;
+  final int ballControl;
+  final int composure;
+  final int crossing;
+  final int curve;
+  final int def;
+  final int defensiveAwareness;
+  final int dri;
+  final int dribbling;
+  final int finishing;
+  final int freeKickAccuracy;
+  final int gkDiving;
+  final int gkHandling;
+  final int gkKicking;
+  final int gkPositioning;
+  final int gkReflexes;
+  final int headingAccuracy;
+  final int interceptions;
+  final int longPassing;
+  final int longShots;
+  final int pac;
+  final int pas;
+  final int penalties;
+  final int phy;
+  final int positioning;
+  final int reactions;
+  final int sho;
+  final int shortPassing;
+  final int shotPower;
+  final int slidingTackle;
+  final int sprintSpeed;
+  final int standingTackle;
+  final int vision;
+  final int volleys;
 
-  Stats(
-      {this.acceleration,
-      this.agility,
-      this.jumping,
-      this.stamina,
-      this.strength,
-      this.aggression,
-      this.balance,
-      this.ballControl,
-      this.composure,
-      this.crossing,
-      this.curve,
-      this.def,
-      this.defensiveAwareness,
-      this.dri,
-      this.dribbling,
-      this.finishing,
-      this.freeKickAccuracy,
-      this.gkDiving,
-      this.gkHandling,
-      this.gkKicking,
-      this.gkPositioning,
-      this.gkReflexes,
-      this.headingAccuracy,
-      this.interceptions,
-      this.longPassing,
-      this.longShots,
-      this.pac,
-      this.pas,
-      this.penalties,
-      this.phy,
-      this.positioning,
-      this.reactions,
-      this.sho,
-      this.shortPassing,
-      this.shotPower,
-      this.slidingTackle,
-      this.sprintSpeed,
-      this.standingTackle,
-      this.vision,
-      this.volleys});
+  Stats({
+    required this.acceleration,
+    required this.agility,
+    required this.jumping,
+    required this.stamina,
+    required this.strength,
+    required this.aggression,
+    required this.balance,
+    required this.ballControl,
+    required this.composure,
+    required this.crossing,
+    required this.curve,
+    required this.def,
+    required this.defensiveAwareness,
+    required this.dri,
+    required this.dribbling,
+    required this.finishing,
+    required this.freeKickAccuracy,
+    required this.gkDiving,
+    required this.gkHandling,
+    required this.gkKicking,
+    required this.gkPositioning,
+    required this.gkReflexes,
+    required this.headingAccuracy,
+    required this.interceptions,
+    required this.longPassing,
+    required this.longShots,
+    required this.pac,
+    required this.pas,
+    required this.penalties,
+    required this.phy,
+    required this.positioning,
+    required this.reactions,
+    required this.sho,
+    required this.shortPassing,
+    required this.shotPower,
+    required this.slidingTackle,
+    required this.sprintSpeed,
+    required this.standingTackle,
+    required this.vision,
+    required this.volleys,
+  });
 
-  Stats.fromJson(Map<String, dynamic> json) {
-    acceleration = json['acceleration'] != null
-        ? new Acceleration.fromJson(json['acceleration'])
-        : null;
-    agility = json['agility'] != null
-        ? new Acceleration.fromJson(json['agility'])
-        : null;
-    jumping = json['jumping'] != null
-        ? new Acceleration.fromJson(json['jumping'])
-        : null;
-    stamina = json['stamina'] != null
-        ? new Acceleration.fromJson(json['stamina'])
-        : null;
-    strength = json['strength'] != null
-        ? new Acceleration.fromJson(json['strength'])
-        : null;
-    aggression = json['aggression'] != null
-        ? new Acceleration.fromJson(json['aggression'])
-        : null;
-    balance = json['balance'] != null
-        ? new Acceleration.fromJson(json['balance'])
-        : null;
-    ballControl = json['ballControl'] != null
-        ? new Acceleration.fromJson(json['ballControl'])
-        : null;
-    composure = json['composure'] != null
-        ? new Acceleration.fromJson(json['composure'])
-        : null;
-    crossing = json['crossing'] != null
-        ? new Acceleration.fromJson(json['crossing'])
-        : null;
-    curve =
-        json['curve'] != null ? new Acceleration.fromJson(json['curve']) : null;
-    def = json['def'] != null ? new Acceleration.fromJson(json['def']) : null;
-    defensiveAwareness = json['defensiveAwareness'] != null
-        ? new Acceleration.fromJson(json['defensiveAwareness'])
-        : null;
-    dri = json['dri'] != null ? new Acceleration.fromJson(json['dri']) : null;
-    dribbling = json['dribbling'] != null
-        ? new Acceleration.fromJson(json['dribbling'])
-        : null;
-    finishing = json['finishing'] != null
-        ? new Acceleration.fromJson(json['finishing'])
-        : null;
-    freeKickAccuracy = json['freeKickAccuracy'] != null
-        ? new Acceleration.fromJson(json['freeKickAccuracy'])
-        : null;
-    gkDiving = json['gkDiving'] != null
-        ? new Acceleration.fromJson(json['gkDiving'])
-        : null;
-    gkHandling = json['gkHandling'] != null
-        ? new Acceleration.fromJson(json['gkHandling'])
-        : null;
-    gkKicking = json['gkKicking'] != null
-        ? new Acceleration.fromJson(json['gkKicking'])
-        : null;
-    gkPositioning = json['gkPositioning'] != null
-        ? new Acceleration.fromJson(json['gkPositioning'])
-        : null;
-    gkReflexes = json['gkReflexes'] != null
-        ? new Acceleration.fromJson(json['gkReflexes'])
-        : null;
-    headingAccuracy = json['headingAccuracy'] != null
-        ? new Acceleration.fromJson(json['headingAccuracy'])
-        : null;
-    interceptions = json['interceptions'] != null
-        ? new Acceleration.fromJson(json['interceptions'])
-        : null;
-    longPassing = json['longPassing'] != null
-        ? new Acceleration.fromJson(json['longPassing'])
-        : null;
-    longShots = json['longShots'] != null
-        ? new Acceleration.fromJson(json['longShots'])
-        : null;
-    pac = json['pac'] != null ? new Acceleration.fromJson(json['pac']) : null;
-    pas = json['pas'] != null ? new Acceleration.fromJson(json['pas']) : null;
-    penalties = json['penalties'] != null
-        ? new Acceleration.fromJson(json['penalties'])
-        : null;
-    phy = json['phy'] != null ? new Acceleration.fromJson(json['phy']) : null;
-    positioning = json['positioning'] != null
-        ? new Acceleration.fromJson(json['positioning'])
-        : null;
-    reactions = json['reactions'] != null
-        ? new Acceleration.fromJson(json['reactions'])
-        : null;
-    sho = json['sho'] != null ? new Acceleration.fromJson(json['sho']) : null;
-    shortPassing = json['shortPassing'] != null
-        ? new Acceleration.fromJson(json['shortPassing'])
-        : null;
-    shotPower = json['shotPower'] != null
-        ? new Acceleration.fromJson(json['shotPower'])
-        : null;
-    slidingTackle = json['slidingTackle'] != null
-        ? new Acceleration.fromJson(json['slidingTackle'])
-        : null;
-    sprintSpeed = json['sprintSpeed'] != null
-        ? new Acceleration.fromJson(json['sprintSpeed'])
-        : null;
-    standingTackle = json['standingTackle'] != null
-        ? new Acceleration.fromJson(json['standingTackle'])
-        : null;
-    vision = json['vision'] != null
-        ? new Acceleration.fromJson(json['vision'])
-        : null;
-    volleys = json['volleys'] != null
-        ? new Acceleration.fromJson(json['volleys'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.acceleration != null) {
-      data['acceleration'] = this.acceleration!.toJson();
-    }
-    if (this.agility != null) {
-      data['agility'] = this.agility!.toJson();
-    }
-    if (this.jumping != null) {
-      data['jumping'] = this.jumping!.toJson();
-    }
-    if (this.stamina != null) {
-      data['stamina'] = this.stamina!.toJson();
-    }
-    if (this.strength != null) {
-      data['strength'] = this.strength!.toJson();
-    }
-    if (this.aggression != null) {
-      data['aggression'] = this.aggression!.toJson();
-    }
-    if (this.balance != null) {
-      data['balance'] = this.balance!.toJson();
-    }
-    if (this.ballControl != null) {
-      data['ballControl'] = this.ballControl!.toJson();
-    }
-    if (this.composure != null) {
-      data['composure'] = this.composure!.toJson();
-    }
-    if (this.crossing != null) {
-      data['crossing'] = this.crossing!.toJson();
-    }
-    if (this.curve != null) {
-      data['curve'] = this.curve!.toJson();
-    }
-    if (this.def != null) {
-      data['def'] = this.def!.toJson();
-    }
-    if (this.defensiveAwareness != null) {
-      data['defensiveAwareness'] = this.defensiveAwareness!.toJson();
-    }
-    if (this.dri != null) {
-      data['dri'] = this.dri!.toJson();
-    }
-    if (this.dribbling != null) {
-      data['dribbling'] = this.dribbling!.toJson();
-    }
-    if (this.finishing != null) {
-      data['finishing'] = this.finishing!.toJson();
-    }
-    if (this.freeKickAccuracy != null) {
-      data['freeKickAccuracy'] = this.freeKickAccuracy!.toJson();
-    }
-    if (this.gkDiving != null) {
-      data['gkDiving'] = this.gkDiving!.toJson();
-    }
-    if (this.gkHandling != null) {
-      data['gkHandling'] = this.gkHandling!.toJson();
-    }
-    if (this.gkKicking != null) {
-      data['gkKicking'] = this.gkKicking!.toJson();
-    }
-    if (this.gkPositioning != null) {
-      data['gkPositioning'] = this.gkPositioning!.toJson();
-    }
-    if (this.gkReflexes != null) {
-      data['gkReflexes'] = this.gkReflexes!.toJson();
-    }
-    if (this.headingAccuracy != null) {
-      data['headingAccuracy'] = this.headingAccuracy!.toJson();
-    }
-    if (this.interceptions != null) {
-      data['interceptions'] = this.interceptions!.toJson();
-    }
-    if (this.longPassing != null) {
-      data['longPassing'] = this.longPassing!.toJson();
-    }
-    if (this.longShots != null) {
-      data['longShots'] = this.longShots!.toJson();
-    }
-    if (this.pac != null) {
-      data['pac'] = this.pac!.toJson();
-    }
-    if (this.pas != null) {
-      data['pas'] = this.pas!.toJson();
-    }
-    if (this.penalties != null) {
-      data['penalties'] = this.penalties!.toJson();
-    }
-    if (this.phy != null) {
-      data['phy'] = this.phy!.toJson();
-    }
-    if (this.positioning != null) {
-      data['positioning'] = this.positioning!.toJson();
-    }
-    if (this.reactions != null) {
-      data['reactions'] = this.reactions!.toJson();
-    }
-    if (this.sho != null) {
-      data['sho'] = this.sho!.toJson();
-    }
-    if (this.shortPassing != null) {
-      data['shortPassing'] = this.shortPassing!.toJson();
-    }
-    if (this.shotPower != null) {
-      data['shotPower'] = this.shotPower!.toJson();
-    }
-    if (this.slidingTackle != null) {
-      data['slidingTackle'] = this.slidingTackle!.toJson();
-    }
-    if (this.sprintSpeed != null) {
-      data['sprintSpeed'] = this.sprintSpeed!.toJson();
-    }
-    if (this.standingTackle != null) {
-      data['standingTackle'] = this.standingTackle!.toJson();
-    }
-    if (this.vision != null) {
-      data['vision'] = this.vision!.toJson();
-    }
-    if (this.volleys != null) {
-      data['volleys'] = this.volleys!.toJson();
-    }
-    return data;
-  }
-}
-
-class Acceleration {
-  int? value;
-  int? diff;
-
-  Acceleration({this.value, this.diff});
-
-  Acceleration.fromJson(Map<String, dynamic> json) {
-    value = json['value'];
-    diff = json['diff'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['value'] = this.value;
-    data['diff'] = this.diff;
-    return data;
+  factory Stats.fromJson(Map<String, dynamic> json) {
+    return Stats(
+      acceleration: json['acceleration']['value'],
+      agility: json['agility']['value'],
+      jumping: json['jumping']['value'],
+      stamina: json['stamina']['value'],
+      strength: json['strength']['value'],
+      aggression: json['aggression']['value'],
+      balance: json['balance']['value'],
+      ballControl: json['ballControl']['value'],
+      composure: json['composure']['value'],
+      crossing: json['crossing']['value'],
+      curve: json['curve']['value'],
+      def: json['def']['value'],
+      defensiveAwareness: json['defensiveAwareness']['value'],
+      dri: json['dri']['value'],
+      dribbling: json['dribbling']['value'],
+      finishing: json['finishing']['value'],
+      freeKickAccuracy: json['freeKickAccuracy']['value'],
+      gkDiving: json['gkDiving']['value'],
+      gkHandling: json['gkHandling']['value'],
+      gkKicking: json['gkKicking']['value'],
+      gkPositioning: json['gkPositioning']['value'],
+      gkReflexes: json['gkReflexes']['value'],
+      headingAccuracy: json['headingAccuracy']['value'],
+      interceptions: json['interceptions']['value'],
+      longPassing: json['longPassing']['value'],
+      longShots: json['longShots']['value'],
+      pac: json['pac']['value'],
+      pas: json['pas']['value'],
+      penalties: json['penalties']['value'],
+      phy: json['phy']['value'],
+      positioning: json['positioning']['value'],
+      reactions: json['reactions']['value'],
+      sho: json['sho']['value'],
+      shortPassing: json['shortPassing']['value'],
+      shotPower: json['shotPower']['value'],
+      slidingTackle: json['slidingTackle']['value'],
+      sprintSpeed: json['sprintSpeed']['value'],
+      standingTackle: json['standingTackle']['value'],
+      vision: json['vision']['value'],
+      volleys: json['volleys']['value'],
+    );
   }
 }
