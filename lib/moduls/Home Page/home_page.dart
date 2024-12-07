@@ -14,13 +14,13 @@ class HomePage extends StatelessWidget {
 
   var formKey = GlobalKey<FormState>();
 
-  double blurLevel = 20;
   final playerImage =
       'https://s3-us-west-2.amazonaws.com/s.cdpn.io/214624/Ronaldo.png';
   final countryImage =
       'https://s3-us-west-2.amazonaws.com/s.cdpn.io/214624/portugal.png';
   final clubImage =
       'https://s3-us-west-2.amazonaws.com/s.cdpn.io/214624/Juventus_Logo.png';
+  double blurLevel = 20;
 
   @override
   Widget build(BuildContext context) {
@@ -29,22 +29,19 @@ class HomePage extends StatelessWidget {
       child: BlocConsumer<BlurCubit, BlurStates>(
         builder: (context, state) {
           BlurCubit cubit = BlurCubit.get(context);
-          double blurValue = 20;
-          bool isStart = true;
+          double blurLevel = 20; // مستوى الضبابية الافتراضي
+
           if (state is BlurUpdatedState) {
-            blurValue = state.blurLevel;
+            blurLevel = state.blurLevel;
           } else if (state is BlurInitialState) {
-            blurValue = state.blurLevel;
-          }else{
-
+            blurLevel = state.blurLevel; // قد ترغب في وضع قيمة افتراضية هنا
           }
-
-          if(state is PlayerLoadingState){
+          if (state is PlayerLoadingState) {
+            print('herrr');
             return Center(child: CircularProgressIndicator());
-
-          }else if (state is PlayerSuccessState) {
+          } else if (state is PlayerSuccessState) {
             final players = state.player;
-            print('player here ${players.commonName}');
+            print('PlayerSuccessState ببب');
 
             return Scaffold(
               body: Container(
@@ -612,13 +609,12 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             );
-          }else if (state is PlayerErrorState){
-            return Center(child: Text('Error: ${state.message}'));
-
-          }else {
-            throw Exception('Unhandled state: $state');
-
+          }else if (state is PlayerErrorState) {
+            return Center(child: Text('خطأ: ${state.message}'));
+          } else {
+            return Center(child: Text('حالة غير معروفة'));
           }
+
         },
         listener: (context, state) {},
       ),

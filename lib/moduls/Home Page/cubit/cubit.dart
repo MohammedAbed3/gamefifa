@@ -21,15 +21,21 @@ class BlurCubit extends Cubit<BlurStates> {
 
 
   Future<List<PlayerModel>> fetchPlayerData() async {
+    emit(PlayerLoadingState());
     final response = await http.get(Uri.parse(
         'https://guesstheplayer.site/player22.json'));
 
     if (response.statusCode == 200) {
+      print('تم جلب البينات');
       List<dynamic> jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) {
         return PlayerModel.fromJson(data);
+        emit(PlayerSuccessState(jsonResponse as PlayerModel));
+
       }).toList();
+
     } else {
+      emit(PlayerErrorState(''));
       throw Exception('Failed to load player data');
     }
   }
@@ -41,45 +47,6 @@ class BlurCubit extends Cubit<BlurStates> {
 
 
 
-  // void getPlayerData() async {
-  //   emit(PlayerLoadingState());
-  //   final dio = Dio();
-  //   const String jsonUrl = 'https://gist.githubusercontent.com/MohammedAbed3/27663f0d445d1a915e10d46f033a4303/raw/3c2ede8d7d0744e2281003aa09e30d9ea56fd42c/gistfile1.txt'; // Replace with your actual API URL
-  //
-  //   try {
-  //     final response = await dio.get(jsonUrl);
-  //
-  //     if (response.statusCode == 200) {
-  //       final data = response.data;
-  //       if (data != null) {
-  //         try {
-  //           // Crucial change: Use PlayerModelList.fromJson() to parse the array
-  //            playerModel = PlayerModel.fromJson(data);
-  //           emit(PlayerSuccessState(playerModel!));
-  //         } on FormatException catch (e) {
-  //           print("JSON Format Error: ${e.message}"); //More specific error
-  //           emit(PlayerErrorState("Invalid JSON data received."));
-  //         } on dynamic catch (e) { // Catch any other parsing errors
-  //           print("JSON Parsing Error: ${e.toString()}");
-  //           emit(PlayerErrorState("Error parsing player list."));
-  //         }
-  //       } else {
-  //         emit(PlayerErrorState('Received empty or null data from the server.'));
-  //       }
-  //     } else {
-  //       emit(PlayerErrorState('Server error: Status code ${response.statusCode}'));
-  //     }
-  //   } on DioError catch (e) {
-  //     print("Dio Error: ${e.message}");
-  //     emit(PlayerErrorState('Network error: ${e.message}')); //More informative network errors
-  //   } catch (e) {
-  //     print('Unexpected Error: ${e.toString()}'); //For debugging
-  //     emit(PlayerErrorState('An unexpected error occurred.'));
-  //   }
-  // }
-
-
-  // تقليل درجة التمويه
   void decreaseBlur() {
     double currentBlur = (state is BlurUpdatedState)
         ? (state as BlurUpdatedState).blurLevel
