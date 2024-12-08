@@ -1,11 +1,9 @@
 
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guess_the_player/moduls/Home%20Page/cubit/states.dart';
 
 import '../../../models/PalyerModel.dart';
+import '../../../sharit/network/online.dart';
 
 class BlurCubit extends Cubit<BlurStates> {
   BlurCubit() : super(BlurInitialState(20)); // قيمة البداية 20
@@ -19,26 +17,19 @@ class BlurCubit extends Cubit<BlurStates> {
   PlayerModel? playerModel;
 
 
+  Future<List<PlayerModel>?> fetchPlayer() async {
+    try {
+      // تخيل أنه يتم جلب اللاعب هنا من API أو قاعدة بيانات.
+      List<PlayerModel> player = await fetchPlayerData();
+      emit(PlayerSuccessState(player));
 
-  Future<List<PlayerModel>> fetchPlayerData() async {
-    emit(PlayerLoadingState());
-    final response = await http.get(Uri.parse(
-        'https://guesstheplayer.site/player22.json'));
-
-    if (response.statusCode == 200) {
-      print('تم جلب البينات');
-      List<dynamic> jsonResponse = json.decode(response.body);
-      return jsonResponse.map((data) {
-        return PlayerModel.fromJson(data);
-        emit(PlayerSuccessState(jsonResponse as PlayerModel));
-
-      }).toList();
-
-    } else {
-      emit(PlayerErrorState(''));
-      throw Exception('Failed to load player data');
+      return player;
+    } catch (error) {
+      emit(PlayerErrorState(error.toString()));
+      return null;
     }
   }
+
 
 
 

@@ -16,7 +16,7 @@ class BlurUpdatedState extends BlurStates {
 class PlayerLoadingState extends BlurStates {}
 
 class PlayerSuccessState extends BlurStates {
-  final PlayerModel player;
+  final List<PlayerModel> player ;
 
   PlayerSuccessState(this.player);
 }
