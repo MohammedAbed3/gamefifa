@@ -49,13 +49,7 @@ class HomePage extends StatelessWidget {
             blurLevel = state.blurLevel; // قد ترغب في وضع قيمة افتراضية هنا
           }
 
-          if (state is PlayerLoadingState) {
-            print('herrr');
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is PlayerSuccessState) {
-            List<PlayerModel> players = state.player;
-
-            print('PlayerSuccessState ${players.length}');
+         
             return Scaffold(
               body: ListView.builder(
                 itemCount: 1, // استخدام طول اللاعبين
@@ -64,11 +58,7 @@ class HomePage extends StatelessWidget {
                 },
               ),
             );
-          } else if (state is PlayerErrorState) {
-            return Center(child: Text('خطأ: ${state.message}'));
-          } else {
-            return const Center(child: Text('حالة غير معروفة'));
-          }
+          
         },
         listener: (context, state) {},
       ),
@@ -146,7 +136,7 @@ class HomePage extends StatelessWidget {
                                           colorOpacity: 0,
                                           child: Expanded(
                                             child: Text(
-                                              'player.lastName',
+                                              '94',
                                               style: TextStyle(
                                                 fontSize: 40,
                                                 fontWeight: FontWeight.bold,
@@ -164,7 +154,7 @@ class HomePage extends StatelessWidget {
                                           colorOpacity: 0,
                                           child: Expanded(
                                             child: Text(
-                                              '{player.position}',
+                                              'ST',
                                               style: TextStyle(
                                                 fontSize: 25,
                                                 fontWeight: FontWeight.w500,
@@ -257,7 +247,7 @@ class HomePage extends StatelessWidget {
                                         blurColor: color1,
                                         colorOpacity: 0,
                                         child: Text(
-                                          '{cubit.playerModel?.commonName}',
+                                          'RONALDO',
                                           style: TextStyle(
                                             fontFamily: 'Roboto Condensed',
                                             fontSize: 28,
@@ -333,7 +323,7 @@ class HomePage extends StatelessWidget {
                                                     blurColor: color1,
                                                     colorOpacity: 0,
                                                     child: Text(
-                                                      '{p}',
+                                                      '88',
                                                       style: TextStyle(
                                                         fontFamily:
                                                             'Roboto Condensed',
