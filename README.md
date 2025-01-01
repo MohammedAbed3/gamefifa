@@ -1,16 +1,21 @@
-# guess_the_player
+# لعبة بطاقات الفيفا
 
-A new Flutter project.
+لعبة **بطاقات الفيفا** هي لعبة ممتعة وتحديّة تعتمد على بطاقات اللاعبين من لعبة FIFA الشهيرة. تهدف اللعبة إلى اختبار معرفتك باللاعبين وإحصائياتهم من خلال التحديات التي تعتمد على تخمين اللاعبين استنادًا إلى تفاصيل مختارة مثل المراكز، الجنسيات، والأندية التي ينتمون إليها.
 
-## Getting Started
+## مميزات اللعبة:
+- **بطاقات الفيفا:** اللعبة تستخدم بطاقات تحتوي على معلومات عن لاعبي الفيفا مثل الأسماء، الأندية، الجنسيات، الإحصائيات، وغيرها.
+- **تحديات متعددة:** يتم تقديم تحديات تخمين بناءً على بطاقات عشوائية أو قواعد معينة.
+- **مستويات صعوبة:** تتفاوت مستويات اللعبة من السهل إلى الصعب بناءً على نوعية المعلومات المطلوبة.
+- **تصميم بسيط وجذاب:** واجهة المستخدم بسيطة وسهلة الاستخدام لتوفير تجربة لعب ممتعة.
 
-This project is a starting point for a Flutter application.
+## كيفية اللعب:
+1. عند بدء اللعبة، ستظهر بطاقة عشوائية تحتوي على معلومات عن لاعب من لاعبي الفيفا.
+2. ستتلقى سؤالًا يحتوي على خيارات متعددة تتعلق باللاعب المعروض (مثل النادي، الجنسية، أو المركز).
+3. اختر الإجابة الصحيحة من الخيارات المتاحة.
+4. استمر في اللعب لرفع مستوى التحدي مع تقدم اللعبة.
 
-A few resources to get you started if this is your first Flutter project:
+## التقنيات المستخدمة:
+- **Flutter**: لبناء واجهة المستخدم الخاصة باللعبة.
+- **Firebase**: لتخزين البيانات وإدارة التقدم في اللعبة.
+- **API FIFA**: للحصول على بيانات اللاعبين بشكل ديناميكي.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
