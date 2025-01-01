@@ -19,10 +19,3 @@
 - **Firebase**: لتخزين البيانات وإدارة التقدم في اللعبة.
 - **API FIFA**: للحصول على بيانات اللاعبين بشكل ديناميكي.
 
-## التثبيت:
-لتثبيت وتشغيل اللعبة على جهازك المحلي، قم بتنفيذ الخطوات التالية:
-
-1. تأكد من أنك قد قمت بتثبيت [Flutter](https://flutter.dev/docs/get-started/install) على جهازك.
-2. استنساخ المستودع:
-   ```bash
-   git clone https://github.com/username/FIFA-Card-Game.git
