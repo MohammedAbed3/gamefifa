@@ -157,11 +157,12 @@ class Team {
 
 class Position {
   final String label;
+  final String shortLabel;
 
-  Position({required this.label});
+  Position({required this.label, required this.shortLabel});
 
   factory Position.fromJson(Map<String, dynamic> json) {
-    return Position(label: json['label']);
+    return Position(label: json['label'],shortLabel:  json['shortLabel']);
   }
 }
 

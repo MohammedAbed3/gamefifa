@@ -1,8 +1,11 @@
 import 'dart:math';
 
 import 'package:blur/blur.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:guess_the_player/moduls/Home%20Page/PlayerService.dart';
 import 'package:guess_the_player/moduls/Home%20Page/cubit/cubit.dart';
 import 'package:guess_the_player/moduls/Home%20Page/cubit/states.dart';
 
@@ -133,13 +136,15 @@ class HomePage extends StatelessWidget {
                                     blurColor: color1,
                                     colorOpacity: 0,
                                     child: FittedBox(
-                                      child: Text(
-                                        "${player.firstName} ${player.lastName}",
-                                        style: TextStyle(
-                                          fontSize: 40,
-                                          fontWeight: FontWeight.bold,
-                                          color: color3,
-                                        ),
+                                      child: Image.network(
+                                        "${player.team.imageUrl}",
+                                        width: 30,
+                                        height: 30,
+                                        // style: TextStyle(
+                                        //   fontSize: 40,
+                                        //   fontWeight: FontWeight.bold,
+                                        //   color: color3,
+                                        // ),
                                       ),
                                     ),
                                   ),
@@ -151,7 +156,7 @@ class HomePage extends StatelessWidget {
                                     blurColor: color1,
                                     colorOpacity: 0,
                                     child: Text(
-                                      player.position.label,
+                                      player.position.shortLabel, // Positions
                                       style: TextStyle(
                                         fontSize: 25,
                                         fontWeight: FontWeight.w500,
@@ -180,8 +185,7 @@ class HomePage extends StatelessWidget {
                                           : 20,
                                       blurColor: color1,
                                       colorOpacity: 0,
-                                      child: Image.network(player.avatarUrl,
-                                          height: 60)),
+                                      child: Image.network(player.avatarUrl))
                                 ],
                               ),
                             ),
@@ -210,7 +214,7 @@ class HomePage extends StatelessWidget {
                                       blurColor: color1,
                                       colorOpacity: 0,
                                       child: Text(
-                                        player.commonName ?? '',
+                                        player.commonName ?? player.lastName ?? player.firstName ?? '',
                                         style: TextStyle(
                                           fontFamily: 'Roboto Condensed',
                                           fontSize: 28,
@@ -480,28 +484,39 @@ class HomePage extends StatelessWidget {
                       ),
                       // تخصيص الرسالة في حالة الخطأ
                       errorStyle:
-                          const TextStyle(color: Colors.red, fontSize: 14),
+                      const TextStyle(color: Colors.red, fontSize: 14),
                       // تلوين الحافة عند وجود خطأ
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide:
-                            const BorderSide(color: Colors.blue, width: 2),
+                        const BorderSide(color: Colors.blue, width: 2),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide:
-                            const BorderSide(color: Colors.red, width: 2),
+                        const BorderSide(color: Colors.red, width: 2),
                       ),
                       // إضافة أيقونة في ح.\env\Scripts\Activateالة الخطأ
                     ),
                     onFieldSubmitted: (value) {
                       onSubmit(context, player);
                     },
+
                     onChanged: (value) {
                       if (value.isNotEmpty) {
-                        // يمكن تعديل الشرط كما ترغب لعرض القائمة عند الحاجة
-                        // _showSuggestions(
-                        //     context); // إظهار القائمة عندما يتغير النص
+
+                        ListTile(
+
+                          leading: Icon(Icons.person),  // إضافة أيقونة في بداية السطر (اختياري)
+                          title: Text('اسم اللاعب'),    // النص الرئيسي
+                          subtitle: Text('جنسية اللاعب'), // النص الفرعي تحت العنوان
+                          trailing: Icon(Icons.arrow_forward), // إضافة أيقونة في النهاية (اختياري)
+                          onTap: () {
+                            // عند الضغط على العنصر، يمكن تنفيذ أي إجراء مثل الانتقال إلى صفحة أخرى
+                            print('تم الضغط على اللاعب');
+                          },
+                        );
+
                       }
 
                       // PopupMenuButton<String>(
@@ -528,7 +543,7 @@ class HomePage extends StatelessWidget {
                       return null; // إذا كانت القيمة صالحة
                     },
                     style: const TextStyle(fontSize: 16, color: Colors.black),
-                  ),
+                  )
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
@@ -567,29 +582,29 @@ class HomePage extends StatelessWidget {
 
     print('onSubmitssssss');
     if (formKey.currentState?.validate() ?? false) {
-      if (enteredName == player.firstName.toLowerCase()) {
+      if (enteredName == player.lastName.toLowerCase()) {
         // إذا كانت الإجابة صحيحة
         context.read<BlurCubit>().revealAll();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text("إجابة صحيحة!", style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.green,
-          ),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     content:
+        //         Text("إجابة صحيحة!", style: TextStyle(color: Colors.white)),
+        //     backgroundColor: Colors.green,
+        //   ),
+        // );
       } else {
         // إذا كانت الإجابة خاطئة
         nameController.clear();
         print('غلطط');
 
         context.read<BlurCubit>().incrementWrongAnswers();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text("إجابة خاطئة!", style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.red,
-          ),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     content:
+        //         Text("إجابة خاطئة!", style: TextStyle(color: Colors.white)),
+        //     backgroundColor: Colors.red,
+        //   ),
+        // );
       }
     }
   }
