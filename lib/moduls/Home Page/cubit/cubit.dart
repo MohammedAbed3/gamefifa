@@ -13,6 +13,7 @@ class BlurCubit extends Cubit<BlurStates> {
   static BlurCubit get(context) => BlocProvider.of(context);
 
   List<PlayerModel> players = [];
+  List<PlayerModel> searchedPlayers = [];
 
   PlayerModel? playerModel;
 
@@ -33,6 +34,21 @@ class BlurCubit extends Cubit<BlurStates> {
       return players;
     } catch (error) {
       emit(PlayerErrorState(error.toString()));
+      return null;
+    }
+  }
+
+  Future<List<PlayerModel>?> search(String char) async {
+    try {
+      searchedPlayers = players
+          .where((e) =>
+              e.firstName.toLowerCase().contains(char) ||
+              e.lastName.toLowerCase().contains(char))
+          .toList();
+      print('searched: ${searchedPlayers.length}');
+      return searchedPlayers;
+    } catch (e) {
+      emit(PlayerErrorState(e.toString()));
       return null;
     }
   }
