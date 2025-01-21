@@ -34,6 +34,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   late AnimationController threeErrController;
   late AnimationController fourErrController;
+  late AnimationController firstErrController;
+  late AnimationController secondErrController;
+  late AnimationController fifthErrController;
   late AnimationController sixErrController;
   late AnimationController sevenErrController;
 
@@ -53,6 +56,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       vsync: this,
     );
     sevenErrController = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+    firstErrController = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+    secondErrController = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+    fifthErrController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
     );
@@ -81,12 +96,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             return Center(child: Text('خطأ: ${state.message}'));
           } else {
             return Scaffold(
-              resizeToAvoidBottomInset: true,
-              body: playerItemCard(
-                cubit: cubit,
-                context: context,
-              ),
-            );
+                resizeToAvoidBottomInset: true,
+                body: SingleChildScrollView(
+                  child: playerItemCard(
+                    cubit: cubit,
+                    context: context,
+                  ),
+                ));
           }
         },
         listener: (context, state) {},
@@ -107,23 +123,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           center: Alignment.center, // بداية التدرج من المركز
           radius: 1.0, // التدرج يبدأ من النص ويذهب إلى الأطراف
           colors: [
-            cubit.isFullyRevealed ? greenDark : redDark, // اللون في المركز
-
+            cubit.wrongAnswersCount == 0
+                ? color3
+                : (cubit.isFullyRevealed
+                    ? greenDark
+                    : redDark), // تغيير اللون بناءً على عدد الإجابات الغلط
             Colors.black, // اللون عند الأطراف
           ],
         ),
       ),
+
       child: Form(
         key: formKey,
         child: Center(
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height:
-                      searchedPlayers.isNotEmpty && nameController.text != ''
-                          ? MediaQuery.of(context).size.height + 400
-                          : MediaQuery.of(context).size.height,
+            child:SizedBox(
+                  height: searchedPlayers.isNotEmpty && nameController.text != ''
+                      ? MediaQuery.of(context).size.height + 400
+                      : MediaQuery.of(context).size.height,
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -134,10 +151,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         ClipPath(
                           clipper: MyClipper(),
                           child: Container(
-                            width: min(
-                                300, MediaQuery.of(context).size.width * .8),
-                            height: min(
-                                500, MediaQuery.of(context).size.height * .9),
+                            width: min(300, MediaQuery.of(context).size.width * .8),
+                            height:
+                                min(500, MediaQuery.of(context).size.height * .9),
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: const Color(0xFFfdeaa7),
@@ -151,10 +167,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   children: [
                                     // First section - Player information and image
                                     Container(
-                                      width: min(
-                                          300,
-                                          MediaQuery.of(context).size.width *
-                                              .8),
+                                      width: min(300,
+                                          MediaQuery.of(context).size.width * .8),
                                       decoration: const BoxDecoration(
                                         gradient: LinearGradient(
                                           begin: Alignment.topCenter,
@@ -182,31 +196,27 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                 buildAnimatedBlur(
                                                   fourErrController,
                                                   cubit.isFullyRevealed ||
-                                                      cubit.wrongAnswersCount >=
-                                                          4,
+                                                      cubit.wrongAnswersCount >= 4,
                                                   child: Text(
                                                     player.overallRating
                                                         .toString(), // Positions
                                                     style: TextStyle(
                                                       fontSize: 30,
-                                                      fontWeight:
-                                                          FontWeight.w700,
+                                                      fontWeight: FontWeight.w700,
                                                       color: color3,
                                                     ),
                                                   ),
                                                 ),
                                                 buildAnimatedBlur(
-                                                  fourErrController,
+                                                  fifthErrController,
                                                   cubit.isFullyRevealed ||
-                                                      cubit.wrongAnswersCount >=
-                                                          4,
+                                                      cubit.wrongAnswersCount >= 5,
                                                   child: Text(
                                                     player.position
                                                         .shortLabel, // Positions
                                                     style: TextStyle(
                                                       fontSize: 22,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                      fontWeight: FontWeight.w500,
                                                       color: color3,
                                                     ),
                                                   ),
@@ -216,8 +226,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                 buildAnimatedBlur(
                                                   threeErrController,
                                                   cubit.isFullyRevealed ||
-                                                      cubit.wrongAnswersCount >=
-                                                          3,
+                                                      cubit.wrongAnswersCount >= 3,
                                                   child: Image.network(
                                                     player.nationality.imageUrl,
                                                     height: 28,
@@ -228,8 +237,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                 buildAnimatedBlur(
                                                   sixErrController,
                                                   cubit.isFullyRevealed ||
-                                                      cubit.wrongAnswersCount >=
-                                                          6,
+                                                      cubit.wrongAnswersCount >= 6,
                                                   child: Image.network(
                                                     player.team.imageUrl,
                                                     width: 40,
@@ -239,14 +247,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                               ],
                                             ),
                                             buildAnimatedBlur(
-                                              fourErrController,
+                                              sevenErrController,
                                               cubit.isFullyRevealed ||
-                                                  cubit.wrongAnswersCount >= 4,
+                                                  cubit.wrongAnswersCount >= 7,
                                               child: Image.network(
                                                 player.avatarUrl,
                                                 height: kIsWeb ? 180 : 200,
-                                                errorBuilder: (BuildContext
-                                                        context,
+                                                errorBuilder: (BuildContext context,
                                                     Object error,
                                                     StackTrace? stackTrace) {
                                                   return const Icon(
@@ -308,8 +315,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                               cubit.isFullyRevealed ||
                                                   cubit.wrongAnswersCount >= 7,
                                               player.commonName ??
+                                                  player.lastName ??
                                                   player.firstName,
                                               kIsWeb ? 28 : 24,
+
                                             ),
                                             const SizedBox(height: 5),
                                             whiteLine(width: 200, height: 1),
@@ -335,9 +344,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                     'threshold': 1
                                                   },
                                                 ]),
-                                                whiteLine(
-                                                    width: 1, height: 150),
-                                                _buildStatsColumn(cubit, [
+                                                whiteLine(width: 1, height: 150),
+                                                ssbuildStatsColumn(cubit, [
                                                   {
                                                     'label': 'DRI',
                                                     'value': player.stats.dri,
@@ -389,8 +397,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 borderSide: BorderSide.none,
                               ),
                               // تخصيص الرسالة في حالة الخطأ
-                              errorStyle: const TextStyle(
-                                  color: Colors.red, fontSize: 14),
+                              errorStyle:
+                                  const TextStyle(color: Colors.red, fontSize: 14),
                               // تلوين الحافة عند وجود خطأ
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: searchedPlayers.isNotEmpty
@@ -401,8 +409,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                    color: Colors.red, width: 2),
+                                borderSide:
+                                    const BorderSide(color: Colors.red, width: 2),
                               ),
                             ),
                             onFieldSubmitted: (value) {
@@ -423,64 +431,96 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               }
                               return null; // إذا كانت القيمة صالحة
                             },
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.black),
+                            style:
+                                const TextStyle(fontSize: 16, color: Colors.black),
                           ),
                         ),
-                        if (searchedPlayers.isNotEmpty &&
-                            nameController.text != '')
+                        if (searchedPlayers.isNotEmpty && nameController.text != '')
                           Padding(
                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                             child: searchOutput(cubit, player),
                           ),
-                        const SizedBox(height: 25),
                         //btn
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFfdeaa7),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 80,
-                              vertical: 12,
+                        // ElevatedButton(
+                        //   style: ElevatedButton.styleFrom(
+                        //     backgroundColor: const Color(0xFFfdeaa7),
+                        //     padding: const EdgeInsets.symmetric(
+                        //       horizontal: 80,
+                        //       vertical: 12,
+                        //     ),
+                        //   ),
+                        //   onPressed: () {
+                        //     if (cubit.getNext) {
+                        //       setState(() {
+                        //         threeErrController.reverse(); // Increase blur
+                        //         fourErrController.reverse(); // Increase blur
+                        //         sixErrController.reverse(); // Increase blur
+                        //         sevenErrController.reverse(); // Increase blur
+                        //       });
+                        //       Future.delayed(const Duration(milliseconds: 300),
+                        //           () {
+                        //         setState(() {
+                        //           cubit.nextPlayer();
+                        //         });
+                        //       });
+                        //       // get next player
+                        //     } else {
+                        //       onSubmit(context, player, cubit);
+                        //     }
+                        //   },
+                        //   child: Text(
+                        //     cubit.getNext ? "التالي" : "تحقق",
+                        //     style: const TextStyle(
+                        //       color: Colors.black,
+                        //       fontSize: 22,
+                        //       fontWeight: FontWeight.w800,
+                        //     ),
+                        //   ),
+                        // ),
+                        // const SizedBox(
+                        //   height: 30,
+                        // ),
+                        if (cubit.isFullyRevealed)
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFfdeaa7),
                             ),
-                          ),
-                          onPressed: () {
-                            if (cubit.getNext) {
-                              setState(() {
-                                threeErrController.reverse(); // Increase blur
-                                fourErrController.reverse(); // Increase blur
-                                sixErrController.reverse(); // Increase blur
-                                sevenErrController.reverse(); // Increase blur
-                              });
-                              Future.delayed(const Duration(milliseconds: 300),
-                                  () {
+                            onPressed: () {
+                              if (cubit.getNext) {
                                 setState(() {
-                                  cubit.nextPlayer();
+                                  threeErrController.reverse(); // Increase blur
+                                  fourErrController.reverse(); // Increase blur
+                                  sixErrController.reverse(); // Increase blur
+                                  sevenErrController.reverse(); // Increase blur
                                 });
-                              });
-                              // get next player
-                            } else {
-                              onSubmit(context, player, cubit);
-                            }
-                          },
-                          child: Text(
-                            cubit.getNext ? "التالي" : "تحقق",
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w800,
+
+
+                                  setState(() {
+                                    cubit.nextPlayer();
+                                  });
+
+                                // get next player
+                              }
+                            },
+                            child: const Text(
+                              "التالي",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
                           ),
-                        ),
                         const SizedBox(
-                          height: 30,
+                          height: 150,
                         ),
+                        footerWidget(),
                       ],
                     ),
                   ),
                 ),
-                footerWidget(),
-              ],
-            ),
+
+
           ),
         ),
       ),
@@ -562,7 +602,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           const SizedBox(height: 25),
           RichText(
             text: const TextSpan(
-                text: '© 2024 FIFA CARD QUIZ \\\\  ',
+                text: '© 2025 FIFA CARD QUIZ \\\\  ',
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
@@ -651,11 +691,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget _buildStatsColumn(cubit, List<Map<String, dynamic>> stats) {
     return Column(
       children: stats.map((stat) {
-        AnimationController statController = AnimationController(
-          duration: const Duration(milliseconds: 400),
-          vsync: this,
-        );
-
         return Column(
           children: [
             Row(
@@ -671,9 +706,40 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
                 const SizedBox(width: 5),
                 buildAnimationBlurText(
-                  statController,
-                  cubit.isFullyRevealed ||
-                      cubit.wrongAnswersCount >= stat['threshold'],
+                  firstErrController,
+                  cubit.isFullyRevealed || cubit.wrongAnswersCount >= 1,
+                  stat['value'].toString(),
+                  20,
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  Widget ssbuildStatsColumn(cubit, List<Map<String, dynamic>> stats) {
+    return Column(
+      children: stats.map((stat) {
+        return Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  stat['label'],
+                  style: TextStyle(
+                    fontFamily: 'Roboto Condensed',
+                    fontSize: 22,
+                    color: color3,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                buildAnimationBlurText(
+                  secondErrController,
+                  cubit.isFullyRevealed || cubit.wrongAnswersCount >= 2,
                   stat['value'].toString(),
                   20,
                 ),
@@ -803,6 +869,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
         // إذا كانت الإجابة صحيحة
         context.read<BlurCubit>().revealAll();
+        cubit.isFullyRevealed ==true;
+
 
         // ScaffoldMessenger.of(context).showSnackBar(
         //   const SnackBar(
@@ -889,6 +957,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     sixErrController.dispose();
     threeErrController.dispose();
     sevenErrController.dispose();
+    secondErrController.dispose();
+    fifthErrController.dispose();
 
     super.dispose();
   }

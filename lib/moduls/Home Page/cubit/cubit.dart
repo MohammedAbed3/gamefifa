@@ -83,8 +83,9 @@ class BlurCubit extends Cubit<BlurStates> {
   void incrementWrongAnswers() {
     if (!isFullyRevealed) {
       wrongAnswersCount++;
-      if (wrongAnswersCount == 6) {
+      if (wrongAnswersCount == 7) {
         getNext = true;
+        isFullyRevealed = true;
       }
 
       emit(BlurUpdatedState(blurLevel));

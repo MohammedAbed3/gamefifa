@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ExpandedSection extends StatefulWidget {
-  const ExpandedSection({Key? key, required this.expand, required this.child}) : super(key: key);
+  const ExpandedSection({super.key, required this.expand, required this.child});
   final bool expand;
   final Widget child;
   @override
