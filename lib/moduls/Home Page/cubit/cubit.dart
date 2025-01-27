@@ -22,6 +22,8 @@ class BlurCubit extends Cubit<BlurStates> {
   int? index;
 
   Future<List<PlayerModel>?> fetchPlayer() async {
+    emit(PlayerLoadingState());
+
     try {
       // تخيل أنه يتم جلب اللاعب هنا من API أو قاعدة بيانات.
       players = await fetchPlayerData();

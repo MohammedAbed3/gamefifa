@@ -97,10 +97,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           } else {
             return Scaffold(
                 resizeToAvoidBottomInset: true,
-                body: SingleChildScrollView(
-                  child: playerItemCard(
-                    cubit: cubit,
-                    context: context,
+                body: Container(
+                       decoration: BoxDecoration(
+        gradient: RadialGradient(
+          center: Alignment.center, // بداية التدرج من المركز
+          radius: 1.0, // التدرج يبدأ من النص ويذهب إلى الأطراف
+          colors: [
+            cubit.wrongAnswersCount == 0
+                ? color3
+                : (cubit.isFullyRevealed
+                    ? greenDark
+                    : redDark), // تغيير اللون بناءً على عدد الإجابات الغلط
+            Colors.black, // اللون عند الأطراف
+          ],
+        ),
+      ),
+                  child: SingleChildScrollView(
+                    child: playerItemCard(
+                      cubit: cubit,
+                      context: context,
+                    ),
                   ),
                 ));
           }
@@ -118,20 +134,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: RadialGradient(
-          center: Alignment.center, // بداية التدرج من المركز
-          radius: 1.0, // التدرج يبدأ من النص ويذهب إلى الأطراف
-          colors: [
-            cubit.wrongAnswersCount == 0
-                ? color3
-                : (cubit.isFullyRevealed
-                    ? greenDark
-                    : redDark), // تغيير اللون بناءً على عدد الإجابات الغلط
-            Colors.black, // اللون عند الأطراف
-          ],
-        ),
-      ),
+ 
 
       child: Form(
         key: formKey,
@@ -480,34 +483,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         // const SizedBox(
                         //   height: 30,
                         // ),
+                        const SizedBox(
+                          height: 30,
+                        ),
                         if (cubit.isFullyRevealed)
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFfdeaa7),
-                            ),
-                            onPressed: () {
-                              if (cubit.getNext) {
-                                setState(() {
-                                  threeErrController.reverse(); // Increase blur
-                                  fourErrController.reverse(); // Increase blur
-                                  sixErrController.reverse(); // Increase blur
-                                  sevenErrController.reverse(); // Increase blur
-                                });
-
-
+                          SizedBox(
+                                width: 300,
+                                height: 40,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFfdeaa7),
+                              ),
+                              onPressed: () {
+                                if (cubit.getNext) {
                                   setState(() {
-                                    cubit.nextPlayer();
+                                    threeErrController.reverse(); // Increase blur
+                                    fourErrController.reverse(); // Increase blur
+                                    sixErrController.reverse(); // Increase blur
+                                    sevenErrController.reverse(); // Increase blur
                                   });
-
-                                // get next player
-                              }
-                            },
-                            child: const Text(
-                              "التالي",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800,
+                            
+                            
+                                    setState(() {
+                                      cubit.nextPlayer();
+                                    });
+                            
+                                  // get next player
+                                }
+                              },
+                              child: const Text(
+                                "NEXT",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
                             ),
                           ),
@@ -600,25 +610,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           const SizedBox(height: 5),
           whiteLine(width: MediaQuery.of(context).size.width * .8, height: 1),
           const SizedBox(height: 25),
-          RichText(
-            text: const TextSpan(
-                text: '© 2025 FIFA CARD QUIZ \\\\  ',
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-                children: [
-                  TextSpan(
-                      text:
-                          'All logos and brands are property of their respective owners and are used for identification purposes only',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white60,
-                        fontSize: 14,
-                      )),
-                ]),
+          Center(
+  child: RichText(
+    textAlign: TextAlign.center,
+    text: const TextSpan(
+      text: '© 2025 FIFA CARD QUIZ  ',
+      style: TextStyle(
+        fontWeight: FontWeight.w900,
+        color: Colors.white,
+        fontSize: 16,
+      ),
+      children: [
+        TextSpan(
+          text:
+              '\nAll logos and brands are property of their respective owners and are used for identification purposes only.',
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Colors.white60,
+            fontSize: 14,
           ),
+        ),
+      ],
+    ),
+  ),
+),
+
           const SizedBox(
             height: 12,
           ),
@@ -930,7 +946,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   String telegramUrl = 'https://t.me/fifacardquiz';
-  String emailUrl = 'marimeltaweel26@gmail.com';
+  String emailUrl = 'mohammed3bed.saada@gmail.com';
   String discordUrl = 'https://discord.gg/JBvjPf5R';
 
   void launchUrl(String url, {bool mail = false}) async {
