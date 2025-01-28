@@ -3,6 +3,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:guess_the_player/moduls/Home%20Page/home_page.dart';
 
 class NoInternetPage extends StatefulWidget {
+  const NoInternetPage({super.key});
+
   @override
   _NoInternetPageState createState() => _NoInternetPageState();
 }
@@ -62,7 +64,7 @@ class _NoInternetPageState extends State<NoInternetPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.wifi_off, size: 100, color: Colors.red),
+              const Icon(Icons.wifi_off, size: 100, color: Colors.red),
               const SizedBox(height: 20),
               const Text(
                 'لا يوجد اتصال بالإنترنت',

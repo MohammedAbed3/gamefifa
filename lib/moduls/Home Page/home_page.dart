@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:guess_the_player/moduls/Home%20Page/ErrorPage.dart';
 import 'package:guess_the_player/moduls/Home%20Page/cubit/cubit.dart';
 import 'package:guess_the_player/moduls/Home%20Page/cubit/states.dart';
 import 'package:guess_the_player/sharit/Component.dart';
@@ -28,8 +29,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   TextStyle positiveColorStyle =
       const TextStyle(color: Colors.redAccent, fontSize: 20);
   TextStyle neg = const TextStyle(color: Colors.black, fontSize: 20);
-  final clubImage =
-      'https://s3-us-west-2.amazonaws.com/s.cdpn.io/214624/Juventus_Logo.png';
+
   double blurLevel = 20;
 
   late AnimationController threeErrController;
@@ -73,8 +73,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
+
+      double screenWidth = MediaQuery.of(context).size.width;
+
     return BlocProvider(
       create: (context) => BlurCubit()..fetchPlayer(),
       child: BlocConsumer<BlurCubit, BlurStates>(
@@ -93,32 +98,102 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             }
             return const Center(child: CircularProgressIndicator());
           } else if (state is PlayerErrorState) {
-            return Center(child: Text('خطأ: ${state.message}'));
+            // العودة إلى واجهة الخطأ
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ErrorPage(
+                      errorMessage:
+                          'تعذر تحميل البيانات. تأكد من اتصالك بالإنترنت.',
+                      onRetry: () async {
+                        try {
+                          // محاولة جلب البيانات
+                          await cubit.fetchPlayer();
+
+                          // تحقق من حالة الـ Cubit بعد محاولة جلب البيانات
+                          if (cubit.state is PlayerSuccessState) {
+                            // إذا كانت الحالة PlayerLoaded (أي البيانات تم تحميلها بنجاح)
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage()),
+                              (route) => false, // إزالة جميع الصفحات السابقة
+                            );
+                          } else {
+                            // إذا لم يتم تحميل البيانات بنجاح أو كانت هناك مشكلة
+                            print('فشل في تحميل البيانات');
+                          }
+                        } catch (e) {
+                          // في حالة حدوث خطأ أثناء محاولة جلب البيانات
+                          print('Error: $e');
+                          print('حدث خطأ أثناء محاولة جلب البيانات');
+                        }
+                      }),
+                ),
+              );
+            });
+            return const SizedBox(); // إعادة Widget فارغ أثناء الانتقال
           } else {
             return Scaffold(
-                resizeToAvoidBottomInset: true,
-                body: Container(
-                       decoration: BoxDecoration(
-        gradient: RadialGradient(
-          center: Alignment.center, // بداية التدرج من المركز
-          radius: 1.0, // التدرج يبدأ من النص ويذهب إلى الأطراف
-          colors: [
-            cubit.wrongAnswersCount == 0
-                ? color3
-                : (cubit.isFullyRevealed
-                    ? greenDark
-                    : redDark), // تغيير اللون بناءً على عدد الإجابات الغلط
-            Colors.black, // اللون عند الأطراف
-          ],
-        ),
-      ),
-                  child: SingleChildScrollView(
-                    child: playerItemCard(
-                      cubit: cubit,
-                      context: context,
+              resizeToAvoidBottomInset: true,
+              body: Stack(
+                alignment: Alignment.center,
+                 
+                children: [
+
+                 
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment.center, // بداية التدرج من المركز
+                        radius: 1.0, // التدرج يبدأ من النص ويذهب إلى الأطراف
+                        colors: [
+                          cubit.wrongAnswersCount == 0
+                              ? color3
+                              : (cubit.isFullyRevealed
+                                  ? greenDark
+                                  : redDark), // تغيير اللون بناءً على عدد الإجابات الغلط
+                          Colors.black, // اللون عند الأطراف
+                        ],
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      child: playerItemCard(
+                        cubit: cubit,
+                        context: context,
+                      ),
                     ),
                   ),
-                ));
+                  if(screenWidth >800)
+                  Positioned(
+                    top: 20,
+                    left: 20,
+                    child: Container(
+                      height: 600,
+                      width: 160,
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                       child: const Center(
+                         child: Text('ADS ARAE'),
+                      ),
+                    ),
+                  ),
+                  if(screenWidth >800)
+                   Positioned(
+                    top: 20,
+                    right: 20,
+                    child: Container(
+                      height: 600,
+                      width: 160,
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      child: const Center(
+                         child: Text('ADS ARAE'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
           }
         },
         listener: (context, state) {},
@@ -134,403 +209,397 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     return Container(
- 
-
       child: Form(
         key: formKey,
         child: Center(
           child: SingleChildScrollView(
-            child:SizedBox(
-                  height: searchedPlayers.isNotEmpty && nameController.text != ''
-                      ? MediaQuery.of(context).size.height + 400
-                      : MediaQuery.of(context).size.height,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          height: 30,
+            child: SizedBox(
+              height: searchedPlayers.isNotEmpty && nameController.text != ''
+                  ? MediaQuery.of(context).size.height + 400
+                  : MediaQuery.of(context).size.height,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    ClipPath(
+                      clipper: MyClipper(),
+                      child: Container(
+                        width: min(300, MediaQuery.of(context).size.width * .8),
+                        height:
+                            min(500, MediaQuery.of(context).size.height * .9),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFfdeaa7),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        ClipPath(
-                          clipper: MyClipper(),
-                          child: Container(
-                            width: min(300, MediaQuery.of(context).size.width * .8),
-                            height:
-                                min(500, MediaQuery.of(context).size.height * .9),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFfdeaa7),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: ListView(
-                              shrinkWrap: true,
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: [
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    // First section - Player information and image
-                                    Container(
-                                      width: min(300,
-                                          MediaQuery.of(context).size.width * .8),
-                                      decoration: const BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Color(0xFFfdeaa7),
-                                            Color(0xFFCDA549),
-                                          ],
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            15, 15, 15, 0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                // First section - Player information and image
+                                Container(
+                                  width: min(300,
+                                      MediaQuery.of(context).size.width * .8),
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Color(0xFFfdeaa7),
+                                        Color(0xFFCDA549),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        15, 15, 15, 0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const SizedBox(width: 10),
+                                        Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            const SizedBox(width: 10),
-                                            Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                buildAnimatedBlur(
-                                                  fourErrController,
-                                                  cubit.isFullyRevealed ||
-                                                      cubit.wrongAnswersCount >= 4,
-                                                  child: Text(
-                                                    player.overallRating
-                                                        .toString(), // Positions
-                                                    style: TextStyle(
-                                                      fontSize: 30,
-                                                      fontWeight: FontWeight.w700,
-                                                      color: color3,
-                                                    ),
-                                                  ),
+                                            buildAnimatedBlur(
+                                              fourErrController,
+                                              cubit.isFullyRevealed ||
+                                                  cubit.wrongAnswersCount >= 4,
+                                              child: Text(
+                                                player.overallRating
+                                                    .toString(), // Positions
+                                                style: TextStyle(
+                                                  fontSize: 30,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: color3,
                                                 ),
-                                                buildAnimatedBlur(
-                                                  fifthErrController,
-                                                  cubit.isFullyRevealed ||
-                                                      cubit.wrongAnswersCount >= 5,
-                                                  child: Text(
-                                                    player.position
-                                                        .shortLabel, // Positions
-                                                    style: TextStyle(
-                                                      fontSize: 22,
-                                                      fontWeight: FontWeight.w500,
-                                                      color: color3,
-                                                    ),
-                                                  ),
-                                                ),
-                                                whiteLine(width: 50, height: 2),
-                                                const SizedBox(height: 4),
-                                                buildAnimatedBlur(
-                                                  threeErrController,
-                                                  cubit.isFullyRevealed ||
-                                                      cubit.wrongAnswersCount >= 3,
-                                                  child: Image.network(
-                                                    player.nationality.imageUrl,
-                                                    height: 28,
-                                                  ),
-                                                ),
-                                                whiteLine(width: 50, height: 2),
-                                                const SizedBox(height: 4),
-                                                buildAnimatedBlur(
-                                                  sixErrController,
-                                                  cubit.isFullyRevealed ||
-                                                      cubit.wrongAnswersCount >= 6,
-                                                  child: Image.network(
-                                                    player.team.imageUrl,
-                                                    width: 40,
-                                                    height: 40,
-                                                  ),
-                                                ),
-                                              ],
+                                              ),
                                             ),
                                             buildAnimatedBlur(
-                                              sevenErrController,
+                                              fifthErrController,
                                               cubit.isFullyRevealed ||
-                                                  cubit.wrongAnswersCount >= 7,
+                                                  cubit.wrongAnswersCount >= 5,
+                                              child: Text(
+                                                player.position
+                                                    .shortLabel, // Positions
+                                                style: TextStyle(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: color3,
+                                                ),
+                                              ),
+                                            ),
+                                            whiteLine(width: 50, height: 2),
+                                            const SizedBox(height: 4),
+                                            buildAnimatedBlur(
+                                              threeErrController,
+                                              cubit.isFullyRevealed ||
+                                                  cubit.wrongAnswersCount >= 3,
                                               child: Image.network(
-                                                player.avatarUrl,
-                                                height: kIsWeb ? 180 : 200,
-                                                errorBuilder: (BuildContext context,
-                                                    Object error,
-                                                    StackTrace? stackTrace) {
-                                                  return const Icon(
-                                                    Icons.error,
-                                                    size: 50,
-                                                  );
-                                                },
-                                                loadingBuilder:
-                                                    (BuildContext context,
-                                                        Widget child,
-                                                        ImageChunkEvent?
-                                                            loadingProgress) {
-                                                  if (loadingProgress == null) {
-                                                    return child;
-                                                  } else {
-                                                    return Center(
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                        value: loadingProgress
-                                                                    .expectedTotalBytes !=
-                                                                null
-                                                            ? loadingProgress
-                                                                    .cumulativeBytesLoaded /
-                                                                (loadingProgress
-                                                                        .expectedTotalBytes ??
-                                                                    1)
-                                                            : null,
-                                                      ),
-                                                    );
-                                                  }
-                                                },
+                                                player.nationality.imageUrl,
+                                                height: 28,
+                                              ),
+                                            ),
+                                            whiteLine(width: 50, height: 2),
+                                            const SizedBox(height: 4),
+                                            buildAnimatedBlur(
+                                              sixErrController,
+                                              cubit.isFullyRevealed ||
+                                                  cubit.wrongAnswersCount >= 6,
+                                              child: Image.network(
+                                                player.team.imageUrl,
+                                                width: 40,
+                                                height: 40,
                                               ),
                                             ),
                                           ],
                                         ),
-                                      ),
+                                        buildAnimatedBlur(
+                                          sevenErrController,
+                                          cubit.isFullyRevealed ||
+                                              cubit.wrongAnswersCount >= 7,
+                                          child: Image.network(
+                                            player.avatarUrl,
+                                            height: kIsWeb ? 180 : 200,
+                                            errorBuilder: (BuildContext context,
+                                                Object error,
+                                                StackTrace? stackTrace) {
+                                              return const Icon(
+                                                Icons.error,
+                                                size: 50,
+                                              );
+                                            },
+                                            loadingBuilder:
+                                                (BuildContext context,
+                                                    Widget child,
+                                                    ImageChunkEvent?
+                                                        loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              } else {
+                                                return Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    value: loadingProgress
+                                                                .expectedTotalBytes !=
+                                                            null
+                                                        ? loadingProgress
+                                                                .cumulativeBytesLoaded /
+                                                            (loadingProgress
+                                                                    .expectedTotalBytes ??
+                                                                1)
+                                                        : null,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    // Second section - Player name and stats
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.bottomCenter,
-                                          end: Alignment.topCenter,
-                                          colors: [
-                                            Color(0xFFfdeaa7),
-                                            Color(0xFFe1c072)
-                                          ],
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            15, 0, 15, 15),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const SizedBox(height: 10),
-                                            buildAnimationBlurText(
-                                              sevenErrController,
-                                              cubit.isFullyRevealed ||
-                                                  cubit.wrongAnswersCount >= 7,
-                                              player.commonName ??
-                                                  player.lastName ??
-                                                  player.firstName,
-                                              kIsWeb ? 28 : 24,
-
-                                            ),
-                                            const SizedBox(height: 5),
-                                            whiteLine(width: 200, height: 1),
-                                            const SizedBox(height: 10),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                _buildStatsColumn(cubit, [
-                                                  {
-                                                    'label': 'PAC',
-                                                    'value': player.stats.pac,
-                                                    'threshold': 1
-                                                  },
-                                                  {
-                                                    'label': 'SHO',
-                                                    'value': player.stats.sho,
-                                                    'threshold': 1
-                                                  },
-                                                  {
-                                                    'label': 'PAS',
-                                                    'value': player.stats.pas,
-                                                    'threshold': 1
-                                                  },
-                                                ]),
-                                                whiteLine(width: 1, height: 150),
-                                                ssbuildStatsColumn(cubit, [
-                                                  {
-                                                    'label': 'DRI',
-                                                    'value': player.stats.dri,
-                                                    'threshold': 2
-                                                  },
-                                                  {
-                                                    'label': 'DEF',
-                                                    'value': player.stats.def,
-                                                    'threshold': 2
-                                                  },
-                                                  {
-                                                    'label': 'PHY',
-                                                    'value': player.stats.phy,
-                                                    'threshold': 2
-                                                  },
-                                                ]),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  ],
+                                  ),
                                 ),
+                                // Second section - Player name and stats
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        Color(0xFFfdeaa7),
+                                        Color(0xFFe1c072)
+                                      ],
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        15, 0, 15, 15),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const SizedBox(height: 10),
+                                        buildAnimationBlurText(
+                                          sevenErrController,
+                                          cubit.isFullyRevealed ||
+                                              cubit.wrongAnswersCount >= 7,
+                                          player.commonName ??
+                                              player.lastName ??
+                                              player.firstName,
+                                          kIsWeb ? 28 : 24,
+                                        ),
+                                        const SizedBox(height: 5),
+                                        whiteLine(width: 200, height: 1),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            _buildStatsColumn(cubit, [
+                                              {
+                                                'label': 'PAC',
+                                                'value': player.stats.pac,
+                                                'threshold': 1
+                                              },
+                                              {
+                                                'label': 'SHO',
+                                                'value': player.stats.sho,
+                                                'threshold': 1
+                                              },
+                                              {
+                                                'label': 'PAS',
+                                                'value': player.stats.pas,
+                                                'threshold': 1
+                                              },
+                                            ]),
+                                            whiteLine(width: 1, height: 150),
+                                            ssbuildStatsColumn(cubit, [
+                                              {
+                                                'label': 'DRI',
+                                                'value': player.stats.dri,
+                                                'threshold': 2
+                                              },
+                                              {
+                                                'label': 'DEF',
+                                                'value': player.stats.def,
+                                                'threshold': 2
+                                              },
+                                              {
+                                                'label': 'PHY',
+                                                'value': player.stats.phy,
+                                                'threshold': 2
+                                              },
+                                            ]),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
-                          ),
+                          ],
                         ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        //search
-                        SizedBox(
-                          width: 300,
-                          child: TextFormField(
-                            controller: nameController,
-                            decoration: InputDecoration(
-                              hintText: "أدخل اسم اللاعب",
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 20),
-                              border: OutlineInputBorder(
-                                borderRadius: searchedPlayers.isNotEmpty
-                                    ? const BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10))
-                                    : BorderRadius.circular(10),
-                                borderSide: BorderSide.none,
-                              ),
-                              // تخصيص الرسالة في حالة الخطأ
-                              errorStyle:
-                                  const TextStyle(color: Colors.red, fontSize: 14),
-                              // تلوين الحافة عند وجود خطأ
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: searchedPlayers.isNotEmpty
-                                    ? const BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10))
-                                    : BorderRadius.circular(10),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    const BorderSide(color: Colors.red, width: 2),
-                              ),
-                            ),
-                            onFieldSubmitted: (value) {
-                              onSubmit(context, player, cubit);
-                            },
-                            onChanged: (value) async {
-                              if (value.isNotEmpty) {
-                                await cubit.search(value).then((out) {
-                                  setState(() {
-                                    searchedPlayers = out ?? [];
-                                  });
-                                });
-                              }
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'يرجى إدخال اسم اللاعب';
-                              }
-                              return null; // إذا كانت القيمة صالحة
-                            },
-                            style:
-                                const TextStyle(fontSize: 16, color: Colors.black),
-                          ),
-                        ),
-                        if (searchedPlayers.isNotEmpty && nameController.text != '')
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                            child: searchOutput(cubit, player),
-                          ),
-                        //btn
-                        // ElevatedButton(
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor: const Color(0xFFfdeaa7),
-                        //     padding: const EdgeInsets.symmetric(
-                        //       horizontal: 80,
-                        //       vertical: 12,
-                        //     ),
-                        //   ),
-                        //   onPressed: () {
-                        //     if (cubit.getNext) {
-                        //       setState(() {
-                        //         threeErrController.reverse(); // Increase blur
-                        //         fourErrController.reverse(); // Increase blur
-                        //         sixErrController.reverse(); // Increase blur
-                        //         sevenErrController.reverse(); // Increase blur
-                        //       });
-                        //       Future.delayed(const Duration(milliseconds: 300),
-                        //           () {
-                        //         setState(() {
-                        //           cubit.nextPlayer();
-                        //         });
-                        //       });
-                        //       // get next player
-                        //     } else {
-                        //       onSubmit(context, player, cubit);
-                        //     }
-                        //   },
-                        //   child: Text(
-                        //     cubit.getNext ? "التالي" : "تحقق",
-                        //     style: const TextStyle(
-                        //       color: Colors.black,
-                        //       fontSize: 22,
-                        //       fontWeight: FontWeight.w800,
-                        //     ),
-                        //   ),
-                        // ),
-                        // const SizedBox(
-                        //   height: 30,
-                        // ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        if (cubit.isFullyRevealed)
-                          SizedBox(
-                                width: 300,
-                                height: 40,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFfdeaa7),
-                              ),
-                              onPressed: () {
-                                if (cubit.getNext) {
-                                  setState(() {
-                                    threeErrController.reverse(); // Increase blur
-                                    fourErrController.reverse(); // Increase blur
-                                    sixErrController.reverse(); // Increase blur
-                                    sevenErrController.reverse(); // Increase blur
-                                  });
-                            
-                            
-                                    setState(() {
-                                      cubit.nextPlayer();
-                                    });
-                            
-                                  // get next player
-                                }
-                              },
-                              child: const Text(
-                                "NEXT",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                          ),
-                        const SizedBox(
-                          height: 150,
-                        ),
-                        footerWidget(),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    //search
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: nameController,
+                        decoration: InputDecoration(
+                          hintText: "أدخل اسم اللاعب",
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 20),
+                          border: OutlineInputBorder(
+                            borderRadius: searchedPlayers.isNotEmpty
+                                ? const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10))
+                                : BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                          // تخصيص الرسالة في حالة الخطأ
+                          errorStyle:
+                              const TextStyle(color: Colors.red, fontSize: 14),
+                          // تلوين الحافة عند وجود خطأ
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: searchedPlayers.isNotEmpty
+                                ? const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10))
+                                : BorderRadius.circular(10),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide:
+                                const BorderSide(color: Colors.red, width: 2),
+                          ),
+                        ),
+                        onFieldSubmitted: (value) {
+                          onSubmit(context, player, cubit);
+                        },
+                        onChanged: (value) async {
+                          if (value.isNotEmpty) {
+                            await cubit.search(value).then((out) {
+                              setState(() {
+                                searchedPlayers = out ?? [];
+                              });
+                            });
+                          }
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'يرجى إدخال اسم اللاعب';
+                          }
+                          return null; // إذا كانت القيمة صالحة
+                        },
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.black),
+                      ),
+                    ),
+                    if (searchedPlayers.isNotEmpty && nameController.text != '')
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                        child: searchOutput(cubit, player),
+                      ),
+                    //btn
+                    // ElevatedButton(
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: const Color(0xFFfdeaa7),
+                    //     padding: const EdgeInsets.symmetric(
+                    //       horizontal: 80,
+                    //       vertical: 12,
+                    //     ),
+                    //   ),
+                    //   onPressed: () {
+                    //     if (cubit.getNext) {
+                    //       setState(() {
+                    //         threeErrController.reverse(); // Increase blur
+                    //         fourErrController.reverse(); // Increase blur
+                    //         sixErrController.reverse(); // Increase blur
+                    //         sevenErrController.reverse(); // Increase blur
+                    //       });
+                    //       Future.delayed(const Duration(milliseconds: 300),
+                    //           () {
+                    //         setState(() {
+                    //           cubit.nextPlayer();
+                    //         });
+                    //       });
+                    //       // get next player
+                    //     } else {
+                    //       onSubmit(context, player, cubit);
+                    //     }
+                    //   },
+                    //   child: Text(
+                    //     cubit.getNext ? "التالي" : "تحقق",
+                    //     style: const TextStyle(
+                    //       color: Colors.black,
+                    //       fontSize: 22,
+                    //       fontWeight: FontWeight.w800,
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(
+                    //   height: 30,
+                    // ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    if (cubit.isFullyRevealed)
+                      SizedBox(
+                        width: 300,
+                        height: 40,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFfdeaa7),
+                          ),
+                          onPressed: () {
+                            if (cubit.getNext) {
+                              setState(() {
+                                threeErrController.reverse(); // Increase blur
+                                fourErrController.reverse(); // Increase blur
+                                sixErrController.reverse(); // Increase blur
+                                sevenErrController.reverse(); // Increase blur
+                              });
+
+                              setState(() {
+                                cubit.nextPlayer();
+                              });
+
+                              // get next player
+                            }
+                          },
+                          child: const Text(
+                            "NEXT",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(
+                      height: 150,
+                    ),
+                    footerWidget(),
+                  ],
                 ),
-
-
+              ),
+            ),
           ),
         ),
       ),
@@ -611,30 +680,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           whiteLine(width: MediaQuery.of(context).size.width * .8, height: 1),
           const SizedBox(height: 25),
           Center(
-  child: RichText(
-    textAlign: TextAlign.center,
-    text: const TextSpan(
-      text: '© 2025 FIFA CARD QUIZ  ',
-      style: TextStyle(
-        fontWeight: FontWeight.w900,
-        color: Colors.white,
-        fontSize: 16,
-      ),
-      children: [
-        TextSpan(
-          text:
-              '\nAll logos and brands are property of their respective owners and are used for identification purposes only.',
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            color: Colors.white60,
-            fontSize: 14,
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: const TextSpan(
+                text: '© 2025 FIFA CARD QUIZ  ',
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+                children: [
+                  TextSpan(
+                    text:
+                        '\nAll logos and brands are property of their respective owners and are used for identification purposes only.',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white60,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ],
-    ),
-  ),
-),
-
           const SizedBox(
             height: 12,
           ),
@@ -885,8 +953,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
         // إذا كانت الإجابة صحيحة
         context.read<BlurCubit>().revealAll();
-        cubit.isFullyRevealed ==true;
-
+        cubit.isFullyRevealed == true;
 
         // ScaffoldMessenger.of(context).showSnackBar(
         //   const SnackBar(
@@ -978,6 +1045,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     super.dispose();
   }
+}
+
+void showErrorMessage(String message,context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('خطأ'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: Text('حسنًا'),
+            onPressed: () {
+              Navigator.of(context).pop(); // إغلاق نافذة التنبيه
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class MyClipper extends CustomClipper<Path> {

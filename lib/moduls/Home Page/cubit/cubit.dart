@@ -36,6 +36,7 @@ class BlurCubit extends Cubit<BlurStates> {
       return players;
     } catch (error) {
       emit(PlayerErrorState(error.toString()));
+      print('خطااا');
       return null;
     }
   }
@@ -63,6 +64,12 @@ class BlurCubit extends Cubit<BlurStates> {
     wrongAnswersCount = 0;
 
     resetBlur();
+  }
+
+  @override
+  Future<void> close() {
+    // Perform any necessary cleanup here
+    return super.close();
   }
 
   void decreaseBlur() {
