@@ -1,5 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:guess_the_player/moduls/Home%20Page/cubit/states.dart';
+import 'package:fifa_card_quiz/moduls/Home%20Page/cubit/states.dart';
 
 import '../../../models/PalyerModel.dart';
 import '../../../sharit/network/online.dart';
@@ -27,6 +29,8 @@ class BlurCubit extends Cubit<BlurStates> {
     try {
       // تخيل أنه يتم جلب اللاعب هنا من API أو قاعدة بيانات.
       players = await fetchPlayerData();
+      
+    players.shuffle(Random());
 
       playerModel = players.firstOrNull;
 

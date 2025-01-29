@@ -1,11 +1,11 @@
 {
-    "name": "guess_the_player",
-    "short_name": "guess_the_player",
+    "name": "FIFA CARD QUIZ",  
+    "short_name": "FIFA CARD QUIZ",  
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#hexcode",
+    "theme_color": "#hexcode",
+    "description": "Test your football knowledge with FIFA Card Quiz!",  // تغيير الوصف إذا كنت ترغب
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -1,4 +1,4 @@
-package com.guesstheplayer.guess_the_player;
+package com.mohammed3bed.fifa_card_quiz;
 
 import io.flutter.embedding.android.FlutterActivity;
 

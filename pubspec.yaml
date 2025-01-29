@@ -1,4 +1,4 @@
-name: guess_the_player
+name: fifa_card_quiz
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -43,9 +43,22 @@ dependencies:
   url_launcher: ^6.3.1
 
 dev_dependencies:
-  flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.3
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/launcher_icons/gameicon.jpg"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/launcher_icons/gameicon.jpg"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -62,6 +75,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/svgs/
+    - assets/gif/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

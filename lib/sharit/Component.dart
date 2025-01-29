@@ -19,3 +19,4 @@ Future<void> loadJsonData() async {
   // استخدام البيانات (على سبيل المثال طباعة البيانات)
   print(data);
 }
+

@@ -1,6 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:guess_the_player/moduls/Home%20Page/home_page.dart';
+import 'package:fifa_card_quiz/moduls/Home%20Page/home_page.dart';
 
 class NoInternetPage extends StatefulWidget {
   const NoInternetPage({super.key});
@@ -11,47 +13,67 @@ class NoInternetPage extends StatefulWidget {
 
 class _NoInternetPageState extends State<NoInternetPage> {
   bool _isConnected = true;
+  bool _isChecking = false;
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
     print('initState called');
     _checkConnectivity();
-  }
-
-  Future<void> _checkConnectivity() async {
-    print('Checking initial connectivity...');
-    final initialConnectivity = await Connectivity().checkConnectivity();
-    print('Initial connectivity: $initialConnectivity');
-    setState(() {
-      _isConnected = initialConnectivity != ConnectivityResult.none;
-    });
-
-    // مراقبة التغييرات بحالة الإنترنت
-    Connectivity().onConnectivityChanged.listen((result) {
+    _connectivitySubscription =
+        Connectivity().onConnectivityChanged.listen((result) {
+      if (!mounted) return; // التأكد من أن الـ State ما زال mounted
       print('Connectivity changed: $result');
       final isConnectedNow = result != ConnectivityResult.none;
       setState(() {
         _isConnected = isConnectedNow;
       });
 
-      // إذا تم الاتصال بالإنترنت، قم بالتنقل للـ HomePage
       if (isConnectedNow) {
         print('Internet connected, navigating to HomePage...');
-        
-        // استخدام addPostFrameCallback لضمان الانتقال بعد بناء الواجهة
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const HomePage()),
-              (Route<dynamic> route) => false,  // This will remove all previous routes
+              (Route<dynamic> route) => false,
             );
           }
         });
       } else {
         print('No internet connection');
       }
-    });
+    }) as StreamSubscription<ConnectivityResult>;
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription
+        .cancel(); // إلغاء الاشتراك عند التخلص من الـ Widget
+    super.dispose();
+  }
+
+  Future<void> _checkConnectivity() async {
+    if (_isChecking) return;
+    _isChecking = true;
+
+    try {
+      print('Checking initial connectivity...');
+      final initialConnectivity = await Connectivity().checkConnectivity();
+      print('Initial connectivity: $initialConnectivity');
+      if (!mounted) return;
+      setState(() {
+        _isConnected = initialConnectivity != ConnectivityResult.none;
+      });
+    } catch (e) {
+      print('Error checking connectivity: $e');
+      if (!mounted) return;
+      setState(() {
+        _isConnected = false; // افترض عدم وجود اتصال في حالة الخطأ
+      });
+    } finally {
+      _isChecking = false;
+    }
   }
 
   @override

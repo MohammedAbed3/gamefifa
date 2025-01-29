@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:guess_the_player/moduls/Home%20Page/home_page.dart';
 
 class ErrorPage extends StatelessWidget {
   final String errorMessage;
   final VoidCallback onRetry;
 
   const ErrorPage({
-    Key? key,
+    super.key,
     required this.errorMessage,
     required this.onRetry,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class ErrorPage extends StatelessWidget {
                       'assets/svgs/errorpage.svg',
                     ),
           
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
           
               // Error Message
               Padding(
@@ -34,14 +33,14 @@ class ErrorPage extends StatelessWidget {
                 child: Text(
                   errorMessage,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     color: Colors.black,
                   ),
                 ),
               ),
           
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
           
               // Retry Button
           ElevatedButton.icon(
@@ -49,12 +48,12 @@ class ErrorPage extends StatelessWidget {
               onRetry();
         
             },
-            icon: Icon(Icons.refresh),
-            label: Text('إعادة المحاولة'),
+            icon: const Icon(Icons.refresh),
+            label: const Text('إعادة المحاولة'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              textStyle: TextStyle(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              textStyle: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

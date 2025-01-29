@@ -1,7 +1,9 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mohammed3bed.fifa_card_quiz"
+    >
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="guess_the_player"
+        android:label="FIFA CARD QUIZ"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
