@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'dart:convert'; // لتحويل البيانات من JSON
-import 'package:flutter/services.dart'; // للوصول للـ assets
+import 'package:flutter/services.dart';
+import 'package:logger/logger.dart'; // للوصول للـ assets
+var logger = Logger();
 
 Widget whiteLine({double width = 10, double height = 1}) => Container(
       width: width, // يمكنك تحديد العرض بناءً على حاجتك
@@ -17,6 +19,6 @@ Future<void> loadJsonData() async {
   final data = json.decode(response);
 
   // استخدام البيانات (على سبيل المثال طباعة البيانات)
-  print(data);
+  logger.i(data);
 }
 

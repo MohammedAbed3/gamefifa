@@ -8,7 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fifa_card_quiz/moduls/Home%20Page/ErrorPage.dart';
 import 'package:fifa_card_quiz/moduls/Home%20Page/cubit/cubit.dart';
 import 'package:fifa_card_quiz/moduls/Home%20Page/cubit/states.dart';
-import 'package:fifa_card_quiz/sharit/Component.dart';
+import 'package:logger/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../../models/PalyerModel.dart';
@@ -23,6 +23,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final TextEditingController nameController = TextEditingController();
+  var logger = Logger();
+
   // الاسم الصحيح للتحقق
   var formKey = GlobalKey<FormState>();
   String? errorMessage;
@@ -97,7 +99,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           }
           if (state is PlayerLoadingState) {
             if (kDebugMode) {
-              print('Loading...');
+              logger.i('Loading...');
             }
             return const Center(child: CircularProgressIndicator());
           } else if (state is PlayerErrorState) {
@@ -120,17 +122,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomePage()),
+                                  builder: (context) => const HomePage()),
                               (route) => false, // إزالة جميع الصفحات السابقة
                             );
                           } else {
                             // إذا لم يتم تحميل البيانات بنجاح أو كانت هناك مشكلة
-                            print('فشل في تحميل البيانات');
+                            logger.e('فشل في تحميل البيانات');
                           }
                         } catch (e) {
                           // في حالة حدوث خطأ أثناء محاولة جلب البيانات
-                          print('Error: $e');
-                          print('حدث خطأ أثناء محاولة جلب البيانات');
+                          logger.e('Error: $e');
+                          logger.e('حدث خطأ أثناء محاولة جلب البيانات');
                         }
                       }),
                 ),
@@ -143,6 +145,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               body: Stack(
                 alignment: Alignment.center,
                 children: [
+             
                   Container(
                     decoration: BoxDecoration(
                       gradient: RadialGradient(
@@ -165,6 +168,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
+              
                 ],
               ),
             );
@@ -594,14 +598,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         top: 20,
                         left: 20,
                         child: InkWell(
-                       
                           onTap: () {
                             launchUrl(emailUrl, mail: true);
                           },
-                          child: Container(
+                          child: SizedBox(
                               height: 600,
                               width: 160,
-                              child: Image.asset('assets/gif/ad.gif')),
+                              child: Image.asset('assets/gif/ads.gif')),
                         ),
                       ),
                     if (screenWidth > 800)
@@ -612,10 +615,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           onTap: () {
                             launchUrl(emailUrl, mail: true);
                           },
-                          child: Container(
+                          child: SizedBox(
                               height: 600,
                               width: 160,
-                              child: Image.asset('assets/gif/ad.gif')),
+                              child: Image.asset('assets/gif/ads.gif')),
                         ),
                       ),
                   ],
@@ -657,7 +660,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             children: [
               Padding(
                 padding: kIsWeb ? const EdgeInsets.all(8.0) : EdgeInsets.zero,
-                child: GestureDetector(
+                child: InkWell(
                     onTap: () {
                       launchUrl(emailUrl, mail: true);
                     },
@@ -669,7 +672,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
               Padding(
                 padding: kIsWeb ? const EdgeInsets.all(8.0) : EdgeInsets.zero,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     launchUrl(discordUrl);
                   },
@@ -682,7 +685,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
               Padding(
                 padding: kIsWeb ? const EdgeInsets.all(8.0) : EdgeInsets.zero,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     launchUrl(telegramUrl);
                   },
@@ -890,7 +893,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                   onTap: () {
                     // عند الضغط على العنصر، يمكن تنفيذ أي إجراء مثل الانتقال إلى صفحة أخرى
-                    print('تم الضغط على اللاعب');
+                    logger.i('تم الضغط على اللاعب');
                     setState(() {
                       nameController.text =
                           '${cubit.searchedPlayers[index].firstName} ${cubit.searchedPlayers[index].lastName}';
@@ -963,15 +966,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   void onSubmit(BuildContext context, PlayerModel player, BlurCubit cubit) {
     final enteredName = nameController.text.trim().toLowerCase();
-    print('enteredName: $enteredName');
-    print('matching: ${player.lastName.toLowerCase()}');
+    logger.i('enteredName: $enteredName');
+    logger.i('matching: ${player.lastName.toLowerCase()}');
 
-    print('onSubmitssssss');
+    logger.i('onSubmitssssss');
     if (formKey.currentState?.validate() ?? false) {
       if (('${player.firstName.toLowerCase()} ${player.lastName.toLowerCase()}')
           .contains(enteredName)) {
         nameController.clear();
-        print('right');
+        logger.i('right');
 
         // إذا كانت الإجابة صحيحة
         context.read<BlurCubit>().revealAll();
@@ -987,7 +990,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       } else {
         // إذا كانت الإجابة خاطئة
         nameController.clear();
-        print('Wrong');
+        logger.e('Wrong');
 
         context.read<BlurCubit>().incrementWrongAnswers();
         // ScaffoldMessenger.of(context).showSnackBar(
@@ -1070,11 +1073,11 @@ void showErrorMessage(String message, context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('خطأ'),
+        title: const Text('خطأ'),
         content: Text(message),
         actions: <Widget>[
           TextButton(
-            child: Text('حسنًا'),
+            child: const Text('حسنًا'),
             onPressed: () {
               Navigator.of(context).pop(); // إغلاق نافذة التنبيه
             },

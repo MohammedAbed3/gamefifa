@@ -1,6 +1,12 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+
 import '../../models/PalyerModel.dart';
 import 'package:http/http.dart' as http;
+
+
+var logger = Logger();
 
 Future<List<PlayerModel>> fetchPlayerData() async {
   try {
@@ -9,7 +15,7 @@ Future<List<PlayerModel>> fetchPlayerData() async {
         await http.get(Uri.parse('https://guesstheplayer.site/player22.json'));
 
     if (response.statusCode == 200) {
-      print('تم جلب البيانات بنجاح');
+      logger.i('تم جلب البيانات بنجاح');
       List<dynamic> jsonResponse = json.decode(response.body);
 
       // تحويل البيانات إلى قائمة من PlayerModel
@@ -18,12 +24,12 @@ Future<List<PlayerModel>> fetchPlayerData() async {
       }).toList();
     } else {
       // إذا كانت الاستجابة غير ناجحة
-      print('فشل في جلب البيانات: ${response.statusCode}');
+      logger.e('فشل في جلب البيانات: ${response.statusCode}');
       throw Exception('فشل في تحميل بيانات اللاعبين.');
     }
   } catch (error) {
     // طباعة الخطأ في الكونسول
-    print('خطأ أثناء جلب البيانات: $error');
+    logger.e('خطأ أثناء جلب البيانات: $error');
     
     // إعادة الخطأ ليتم التعامل معه
     throw Exception('تعذر جلب البيانات. تأكد من الاتصال بالإنترنت.');

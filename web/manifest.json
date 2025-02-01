@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#hexcode",
     "theme_color": "#hexcode",
-    "description": "Test your football knowledge with FIFA Card Quiz!",  // تغيير الوصف إذا كنت ترغب
+    "description": "A FIFA card guessing game. Test your knowledge by guessing the correct player card!",  
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

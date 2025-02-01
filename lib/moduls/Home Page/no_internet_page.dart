@@ -3,9 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fifa_card_quiz/moduls/Home%20Page/home_page.dart';
+import 'package:logger/logger.dart';
 
 class NoInternetPage extends StatefulWidget {
-  const NoInternetPage({super.key});
+  const NoInternetPage({Key? key}) : super(key: key);
 
   @override
   _NoInternetPageState createState() => _NoInternetPageState();
@@ -14,24 +15,25 @@ class NoInternetPage extends StatefulWidget {
 class _NoInternetPageState extends State<NoInternetPage> {
   bool _isConnected = true;
   bool _isChecking = false;
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
+  var logger = Logger();
 
   @override
   void initState() {
     super.initState();
-    print('initState called');
+    logger.i('initState called');
     _checkConnectivity();
-    _connectivitySubscription =
-        Connectivity().onConnectivityChanged.listen((result) {
-      if (!mounted) return; // التأكد من أن الـ State ما زال mounted
-      print('Connectivity changed: $result');
-      final isConnectedNow = result != ConnectivityResult.none;
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> result) {
+      if (!mounted) return; // بنتأكد إن الـ widget بعدها موجودة
+      logger.i('Connectivity changed: $result');
+      final isConnectedNow = result.isNotEmpty && result.first != ConnectivityResult.none;
       setState(() {
         _isConnected = isConnectedNow;
       });
 
       if (isConnectedNow) {
-        print('Internet connected, navigating to HomePage...');
+        logger.i('Internet connected, navigating to HomePage...');
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             Navigator.of(context).pushAndRemoveUntil(
@@ -41,15 +43,14 @@ class _NoInternetPageState extends State<NoInternetPage> {
           }
         });
       } else {
-        print('No internet connection');
+        logger.e('No internet connection');
       }
-    }) as StreamSubscription<ConnectivityResult>;
+    });
   }
 
   @override
   void dispose() {
-    _connectivitySubscription
-        .cancel(); // إلغاء الاشتراك عند التخلص من الـ Widget
+    _connectivitySubscription.cancel(); // بنلغي الاشتراك عند التخلص من الـ widget
     super.dispose();
   }
 
@@ -58,18 +59,18 @@ class _NoInternetPageState extends State<NoInternetPage> {
     _isChecking = true;
 
     try {
-      print('Checking initial connectivity...');
+      logger.i('Checking initial connectivity...');
       final initialConnectivity = await Connectivity().checkConnectivity();
-      print('Initial connectivity: $initialConnectivity');
+      logger.i('Initial connectivity: $initialConnectivity');
       if (!mounted) return;
       setState(() {
         _isConnected = initialConnectivity != ConnectivityResult.none;
       });
     } catch (e) {
-      print('Error checking connectivity: $e');
+      logger.e('Error checking connectivity: $e');
       if (!mounted) return;
       setState(() {
-        _isConnected = false; // افترض عدم وجود اتصال في حالة الخطأ
+        _isConnected = false; // بنفترض عدم وجود اتصال في حالة الخطأ
       });
     } finally {
       _isChecking = false;
@@ -78,9 +79,9 @@ class _NoInternetPageState extends State<NoInternetPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('Building UI...');
+    logger.i('Building UI...');
     if (!_isConnected) {
-      print('No internet connection, showing NoInternetPage');
+      logger.e('No internet connection, showing NoInternetPage');
       return Scaffold(
         body: Center(
           child: Column(
@@ -104,7 +105,7 @@ class _NoInternetPageState extends State<NoInternetPage> {
     }
 
     // عرض واجهة انتظار مؤقتة حتى يتم التنقل للصفحة الرئيسية
-    print('Connected, showing loading indicator');
+    logger.i('Connected, showing loading indicator');
     return const Scaffold(
       body: Center(
         child: CircularProgressIndicator(),

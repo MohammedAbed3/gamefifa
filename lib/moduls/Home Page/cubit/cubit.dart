@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fifa_card_quiz/moduls/Home%20Page/cubit/states.dart';
+import 'package:logger/logger.dart';
 
 import '../../../models/PalyerModel.dart';
 import '../../../sharit/network/online.dart';
@@ -13,6 +14,7 @@ class BlurCubit extends Cubit<BlurStates> {
   bool isFullyRevealed = false; // هل البطاقة مكشوفة بالكامل؟
 
   static BlurCubit get(context) => BlocProvider.of(context);
+var logger = Logger();
 
   List<PlayerModel> players = [];
   List<PlayerModel> searchedPlayers = [];
@@ -40,7 +42,7 @@ class BlurCubit extends Cubit<BlurStates> {
       return players;
     } catch (error) {
       emit(PlayerErrorState(error.toString()));
-      print('خطااا');
+      logger.e('خطااا');
       return null;
     }
   }
@@ -52,7 +54,7 @@ class BlurCubit extends Cubit<BlurStates> {
               e.firstName.toLowerCase().contains(char) ||
               e.lastName.toLowerCase().contains(char))
           .toList();
-      print('searched: ${searchedPlayers.length}');
+      logger.e('searched: ${searchedPlayers.length}');
       return searchedPlayers;
     } catch (e) {
       emit(PlayerErrorState(e.toString()));

@@ -18,8 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkInternetAndNavigate() async {
-    await Future.delayed(
-        const Duration(seconds: 2)); // تأخير بسيط لإظهار الـ SplashScreen
+    await Future.delayed(const Duration(seconds: 2)); // تأخير بسيط لإظهار الـ SplashScreen
 
     final connectivityResult = await Connectivity().checkConnectivity();
     bool isConnected = connectivityResult != ConnectivityResult.none;
@@ -28,8 +27,10 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                isConnected ? const HomePage() : const NoInternetPage()),
+          builder: (context) => isConnected
+              ? const HomePage()
+              : const NoInternetPage(),
+        ),
       );
     }
   }

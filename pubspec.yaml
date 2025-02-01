@@ -1,5 +1,7 @@
 name: fifa_card_quiz
-description: "A new Flutter project."
+description: "A FIFA card guessing game. Test your knowledge by guessing the correct player card!"
+
+
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -40,6 +42,7 @@ dependencies:
   flutter_typeahead: ^5.2.0
   hexcolor: ^3.0.1
   http: ^1.2.2
+  logger: ^2.5.0
   url_launcher: ^6.3.1
 
 dev_dependencies:
