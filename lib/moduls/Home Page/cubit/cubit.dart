@@ -14,7 +14,7 @@ class BlurCubit extends Cubit<BlurStates> {
   bool isFullyRevealed = false; // هل البطاقة مكشوفة بالكامل؟
 
   static BlurCubit get(context) => BlocProvider.of(context);
-var logger = Logger();
+  var logger = Logger();
 
   List<PlayerModel> players = [];
   List<PlayerModel> searchedPlayers = [];
@@ -22,6 +22,8 @@ var logger = Logger();
   PlayerModel? playerModel;
 
   bool getNext = false;
+  bool hideImage = false;
+  int questionsCount = 1;
 
   int? index;
 
@@ -31,8 +33,10 @@ var logger = Logger();
     try {
       // تخيل أنه يتم جلب اللاعب هنا من API أو قاعدة بيانات.
       players = await fetchPlayerData();
-      
-    players.shuffle(Random());
+
+      logger.i('تم جلب البيانات بنجاح');
+
+      players.shuffle(Random());
 
       playerModel = players.firstOrNull;
 
@@ -68,6 +72,7 @@ var logger = Logger();
     isFullyRevealed = false;
     getNext = false;
     wrongAnswersCount = 0;
+        questionsCount = 1;
 
     resetBlur();
   }
@@ -98,9 +103,12 @@ var logger = Logger();
   void incrementWrongAnswers() {
     if (!isFullyRevealed) {
       wrongAnswersCount++;
+      questionsCount++;
+
       if (wrongAnswersCount == 7) {
         getNext = true;
         isFullyRevealed = true;
+        hideImage = false;
       }
 
       emit(BlurUpdatedState(blurLevel));

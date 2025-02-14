@@ -32,14 +32,11 @@ environment:
 dependencies:
   bloc: ^8.1.4
   blur: ^4.0.0
-  cached_network_image: ^3.4.1
-  connectivity_plus: ^6.1.2
   cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
   flutter_svg: ^2.0.17
-  flutter_typeahead: ^5.2.0
   hexcolor: ^3.0.1
   http: ^1.2.2
   logger: ^2.5.0

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:fifa_card_quiz/sharit/Component.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -44,8 +45,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController sevenErrController;
 
   String telegramUrl = 'https://t.me/fifacardquiz';
-  String emailUrl = 'mohammed3bed.saada@gmail.com';
-  String discordUrl = 'https://discord.gg/JBvjPf5R';
+  String emailUrl = 'mo3bed4ads@gmail.com';
+  String discordUrl = 'https://discord.gg/7kpYN4cD9M';
+  String buyMeAoffee = 'https://buymeacoffee.com/mohammed3bb';
 
   @override
   void initState() {
@@ -90,7 +92,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: BlocConsumer<BlurCubit, BlurStates>(
         builder: (context, state) {
           BlurCubit cubit = BlurCubit.get(context);
-          double blurLevel = 20; // مستوى الضبابية الافتراضي
 
           if (state is BlurUpdatedState) {
             blurLevel = state.blurLevel;
@@ -110,7 +111,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 MaterialPageRoute(
                   builder: (context) => ErrorPage(
                       errorMessage:
-                          'تعذر تحميل البيانات. تأكد من اتصالك بالإنترنت.',
+                          'Failed to load data. Please check your internet connection.',
                       onRetry: () async {
                         try {
                           // محاولة جلب البيانات
@@ -127,12 +128,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             );
                           } else {
                             // إذا لم يتم تحميل البيانات بنجاح أو كانت هناك مشكلة
-                            logger.e('فشل في تحميل البيانات');
+                            logger.e('Failed to load data');
                           }
                         } catch (e) {
                           // في حالة حدوث خطأ أثناء محاولة جلب البيانات
                           logger.e('Error: $e');
-                          logger.e('حدث خطأ أثناء محاولة جلب البيانات');
+                          logger.e(
+                              'An error occurred while trying to fetch the data');
                         }
                       }),
                 ),
@@ -145,7 +147,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               body: Stack(
                 alignment: Alignment.center,
                 children: [
-             
                   Container(
                     decoration: BoxDecoration(
                       gradient: RadialGradient(
@@ -168,7 +169,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-              
                 ],
               ),
             );
@@ -263,25 +263,35 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                     style: TextStyle(
                                                       fontSize: 30,
                                                       fontWeight:
-                                                          FontWeight.w700,
+                                                          FontWeight.bold,
                                                       color: color3,
                                                     ),
                                                   ),
                                                 ),
                                                 buildAnimatedBlur(
                                                   fifthErrController,
-                                                  cubit.isFullyRevealed ||
+                                                 cubit.isFullyRevealed ||
                                                       cubit.wrongAnswersCount >=
                                                           5,
-                                                  child: Text(
-                                                    player.position
-                                                        .shortLabel, // Positions
-                                                    style: TextStyle(
-                                                      fontSize: 22,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: color3,
-                                                    ),
+                                                  child: Stack(
+                                                    children: [
+                                                      Text(
+                                                        player.position
+                                                            .shortLabel, // Positions
+                                                        style: TextStyle(
+                                                          fontSize: 22,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: color3,
+                                                        ),
+                                                      ),
+                                                      // if (cubit.hideImage )
+                                                      //   Container(
+                                                      //     width: 30,
+                                                      //     height: 30,
+                                                      //     color: Colors.black,
+                                                      //   )
+                                                    ],
                                                   ),
                                                 ),
                                                 whiteLine(width: 50, height: 2),
@@ -291,9 +301,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                   cubit.isFullyRevealed ||
                                                       cubit.wrongAnswersCount >=
                                                           3,
-                                                  child: Image.network(
-                                                    player.nationality.imageUrl,
-                                                    height: 28,
+                                                  child: Stack(
+                                                    children: [
+                                                      Image.network(
+                                                        player.nationality
+                                                            .imageUrl,
+                                                        height: 28,
+                                                      ),
+                                                      // if (cubit.hideImage)
+                                                      //   Container(
+                                                      //     width: 28,
+                                                      //     height: 28,
+                                                      //     color: Colors.black,
+                                                      //   ),
+                                                    ],
                                                   ),
                                                 ),
                                                 whiteLine(width: 50, height: 2),
@@ -303,10 +324,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                   cubit.isFullyRevealed ||
                                                       cubit.wrongAnswersCount >=
                                                           6,
-                                                  child: Image.network(
-                                                    player.team.imageUrl,
-                                                    width: 40,
-                                                    height: 40,
+                                                  child: Stack(
+                                                    children: [
+                                                      Image.network(
+                                                        player.team.imageUrl,
+                                                        width: 40,
+                                                        height: 40,
+                                                      ),
+                                                      // if (cubit.hideImage)
+                                                      //   Container(
+                                                      //     width: 40,
+                                                      //     height: 40,
+                                                      //     color: Colors.black,
+                                                      //   ),
+                                                    ],
                                                   ),
                                                 ),
                                               ],
@@ -315,42 +346,56 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                               sevenErrController,
                                               cubit.isFullyRevealed ||
                                                   cubit.wrongAnswersCount >= 7,
-                                              child: Image.network(
-                                                player.avatarUrl,
-                                                height: kIsWeb ? 180 : 200,
-                                                errorBuilder: (BuildContext
-                                                        context,
-                                                    Object error,
-                                                    StackTrace? stackTrace) {
-                                                  return const Icon(
-                                                    Icons.error,
-                                                    size: 50,
-                                                  );
-                                                },
-                                                loadingBuilder:
-                                                    (BuildContext context,
+                                              child: Stack(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                children: [
+                                                  Image.network(
+                                                    player.avatarUrl,
+                                                    height: kIsWeb ? 180 : 200,
+                                                    errorBuilder:
+                                                        (BuildContext context,
+                                                            Object error,
+                                                            StackTrace?
+                                                                stackTrace) {
+                                                      return const Icon(
+                                                        Icons.error,
+                                                        size: 50,
+                                                      );
+                                                    },
+                                                    loadingBuilder: (BuildContext
+                                                            context,
                                                         Widget child,
                                                         ImageChunkEvent?
                                                             loadingProgress) {
-                                                  if (loadingProgress == null) {
-                                                    return child;
-                                                  } else {
-                                                    return Center(
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                        value: loadingProgress
-                                                                    .expectedTotalBytes !=
-                                                                null
-                                                            ? loadingProgress
-                                                                    .cumulativeBytesLoaded /
-                                                                (loadingProgress
-                                                                        .expectedTotalBytes ??
-                                                                    1)
-                                                            : null,
-                                                      ),
-                                                    );
-                                                  }
-                                                },
+                                                      if (loadingProgress ==
+                                                          null) {
+                                                        return child;
+                                                      } else {
+                                                        return Center(
+                                                          child:
+                                                              CircularProgressIndicator(
+                                                            value: loadingProgress
+                                                                        .expectedTotalBytes !=
+                                                                    null
+                                                                ? loadingProgress
+                                                                        .cumulativeBytesLoaded /
+                                                                    (loadingProgress
+                                                                            .expectedTotalBytes ??
+                                                                        1)
+                                                                : null,
+                                                          ),
+                                                        );
+                                                      }
+                                                    },
+                                                  ),
+                                                  // if (cubit.hideImage)
+                                                  //   Container(
+                                                  //     width: 160,
+                                                  //     height: 180,
+                                                  //     color: Colors.black,
+                                                  //   ),
+                                                ],
                                               ),
                                             ),
                                           ],
@@ -376,14 +421,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             const SizedBox(height: 10),
-                                            buildAnimationBlurText(
-                                              sevenErrController,
-                                              cubit.isFullyRevealed ||
-                                                  cubit.wrongAnswersCount >= 7,
-                                              player.commonName ??
-                                                  player.lastName ??
-                                                  player.firstName,
-                                              kIsWeb ? 28 : 24,
+                                            Stack(
+                                              children: [
+                                                buildAnimationBlurText(
+                                                  sevenErrController,
+                                                  cubit.isFullyRevealed ||
+                                                      cubit.wrongAnswersCount >=
+                                                          7,
+                                                  player.commonName ??
+                                                      player.lastName ??
+                                                      player.firstName,
+                                                  kIsWeb ? 28 : 24,
+                                                ),
+                                                // if (cubit.hideImage)
+                                                //   Container(
+                                                //     width: 180,
+                                                //     height: 35,
+                                                //     color: Colors.black,
+                                                //   ),
+                                              ],
                                             ),
                                             const SizedBox(height: 5),
                                             whiteLine(width: 200, height: 1),
@@ -449,7 +505,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           child: TextFormField(
                             controller: nameController,
                             decoration: InputDecoration(
-                              hintText: "أدخل اسم اللاعب",
+                              hintText: "Guess ${cubit.questionsCount} of 7",
                               filled: true,
                               fillColor: Colors.grey[200],
                               contentPadding: const EdgeInsets.symmetric(
@@ -493,7 +549,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'يرجى إدخال اسم اللاعب';
+                                return 'Please enter the player\'s name';
                               }
                               return null; // إذا كانت القيمة صالحة
                             },
@@ -588,7 +644,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             ),
                           ),
                         const SizedBox(
+                          height: 30,
+                        ),
+                        // if (cubit.isFullyRevealed)
+                        //   SizedBox(
+                        //     width: 300,
+                        //     height: 40,
+                        //     child: ElevatedButton(
+                        //       style: ElevatedButton.styleFrom(
+                        //         backgroundColor: const Color(0xFFfdeaa7),
+                        //       ),
+                        //       onPressed: () {
+                        //         setState(() {
+                        //           cubit.hideImage = !cubit.hideImage;
+                        //         });
+                        //       },
+                        //       child: const Text(
+                        //         "Hard mode",
+                        //         style: TextStyle(
+                        //           color: Colors.black,
+                        //           fontSize: 22,
+                        //           fontWeight: FontWeight.w800,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        const SizedBox(
                           height: 150,
+                        ),
+                        if(screenWidth < 600)
+                        InkWell(
+                          onTap: () {
+                            launchUrl(emailUrl, mail: true);
+                          },
+                          child: SizedBox(
+                              height: 250,
+                              width: 300,
+                              child: Image.asset('assets/gif/mobilead.gif')),
                         ),
                         footerWidget(),
                       ],
@@ -696,38 +788,89 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+              
             ],
           ),
+          Padding(
+                padding: kIsWeb ? const EdgeInsets.all(8.0) : EdgeInsets.zero,
+                child: InkWell(
+                  onTap: () {
+                    launchUrl(buyMeAoffee);
+                  },
+                  child: SvgPicture.asset(
+                    'assets/svgs/buymeacoffee.svg',
+                    color: Colors.white,
+                    height: 30,
+                  ),
+                ),
+              ),
           const SizedBox(
             height: 12,
           ),
           const SizedBox(height: 5),
           whiteLine(width: MediaQuery.of(context).size.width * .8, height: 1),
           const SizedBox(height: 25),
-          Center(
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: RichText(
               textAlign: TextAlign.center,
-              text: const TextSpan(
-                text: '© 2025 FIFA CARD QUIZ  ',
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
+              text: TextSpan(
+                text: '© 2025 FIFA CARD QUIZ',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 18,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(1, 1),
+                      blurRadius: 2,
+                      color: Colors.black38,
+                    ),
+                  ],
                 ),
                 children: [
-                  TextSpan(
+                  const TextSpan(
                     text:
-                        '\nAll logos and brands are property of their respective owners and are used for identification purposes only.',
+                        '\n\nAll logos and brands are property of their respective owners and are used for identification purposes only.',
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      color: Colors.white60,
+                      color: Colors.white70,
                       fontSize: 14,
+                      height: 1.6, // زيادة المسافة بين الأسطر
+                    ),
+                  ),
+                  const TextSpan(
+                    text:
+                        '\nThis site is not affiliated with EA Sports or FIFA in any way.',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white70,
+                      fontSize: 14,
+                      height: 1.6,
+                    ),
+                  ),
+                  TextSpan(
+                    text: '\n\n Power by Epic Elite',
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        launchUrl('https://www.instagram.com/epic.elite_?igsh=ZHE4N2x4djR0YzVj&utm_source=qr');
+                      },
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent.shade100, // لون مميز ليبرز النص
+                      fontSize: 16,
+                      height: 1.8,
                     ),
                   ),
                 ],
               ),
             ),
+            
           ),
+        ),
+const SizedBox(height: 16),
+
           const SizedBox(
             height: 12,
           ),

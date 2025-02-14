@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:fifa_card_quiz/moduls/Home%20Page/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:fifa_card_quiz/moduls/Home%20Page/SplashScreen%20.dart';
 
 import 'BlocObserver.dart';
 
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: const SplashScreen(),
+      home: const HomePage(),
     );
   }
 }
