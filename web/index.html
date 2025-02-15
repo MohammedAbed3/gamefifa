@@ -1,38 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en"> <!-- تحديد أن الموقع باللغة الإنجليزية -->
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
+  <base href="/">
 
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
-
+  <!-- Meta Tags الأساسية -->
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A FIFA card guessing game. Test your knowledge by guessing the correct player card!">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Test your knowledge in football with the FIFA Card Quiz! Guess the player from their Ultimate Team card.">
+  <meta name="keywords" content="FIFA, Card Quiz, Guess the Player, Football Game, Soccer Trivia, Ultimate Team, FUT, FIFA Ultimate Team">
+  <meta name="author" content="Mohammed3bed">
 
-  <!-- iOS meta tags & icons -->
+  <!-- Open Graph (لتحسين المشاركة على السوشيال ميديا) -->
+  <meta property="og:title" content="FIFA CARD QUIZ - Test Your Football Knowledge!">
+  <meta property="og:description" content="A fun FIFA card guessing game! Challenge yourself and guess the correct players.">
+  <meta property="og:image" content="https://example.com/preview-image.png"> <!-- Change the link to the actual image -->
+  <meta property="og:url" content="https://fifacardquiz.com">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="FIFA CARD QUIZ - Guess the FIFA Player!">
+  <meta name="twitter:description" content="Can you guess the FIFA player from their Ultimate Team card? Test your football knowledge now!">
+  <meta name="twitter:image" content="https://example.com/preview-image.png"> Change the link to the actual image
+
+  <!-- iOS Meta Tags & Icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="FIFA CARD QUIZ">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="assets/icons/favicon.png"/>
+
+  <!-- Manifest -->
+  <link rel="manifest" href="/path/to/manifest.json">
 
   <title>FIFA CARD QUIZ</title>
-  <link rel="manifest" href="manifest.json">
+
+  <!-- JSON-LD لتحسين SEO والفهرسة في Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "FIFA CARD QUIZ",
+    "url": "https://fifacardquiz.com",
+    "description": "A fun FIFA card guessing game! Challenge yourself and guess the correct players."
+  }
+  </script>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+  <script src="flutter_bootstrap.js" defer></script>
 </body>
 </html>
